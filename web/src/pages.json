@@ -1,0 +1,57 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "游戏助手"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/account/account",
+			"style": {
+				"navigationBarTitleText": "账号管理"
+			}
+		},
+		{
+			"path": "pages/poker/create-room",
+			"style": {
+				"navigationBarTitleText": "创建房间"
+			}
+		},
+		{
+			"path": "pages/poker/join-room",
+			"style": {
+				"navigationBarTitleText": "加入房间"
+			}
+		},
+		{
+			"path": "pages/poker/game-room",
+			"style": {
+				"navigationBarTitleText": "打牌记账",
+				"navigationBarBackgroundColor": "#1AAD19",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+			"path": "pages/poker/settlement",
+			"style": {
+				"navigationBarTitleText": "结算",
+				"navigationBarBackgroundColor": "#1AAD19",
+				"navigationBarTextStyle": "white"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "游戏助手",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}

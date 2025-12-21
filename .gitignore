@@ -19,3 +19,17 @@ dist
 *.njsproj
 *.sln
 *.sw?
+
+# 后端
+server/play-tools.db
+server/*.db
+
+# 前端
+web/node_modules/
+web/dist/
+web/unpackage/
+web/.hbuilderx/
+
+# 环境变量
+.env
+.env.local
