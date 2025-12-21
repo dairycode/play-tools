@@ -34,17 +34,13 @@
 		{
 			"path": "pages/poker/game-room",
 			"style": {
-				"navigationBarTitleText": "打牌记账",
-				"navigationBarBackgroundColor": "#1AAD19",
-				"navigationBarTextStyle": "white"
+				"navigationBarTitleText": "打牌记账"
 			}
 		},
 		{
 			"path": "pages/poker/settlement",
 			"style": {
-				"navigationBarTitleText": "结算",
-				"navigationBarBackgroundColor": "#1AAD19",
-				"navigationBarTextStyle": "white"
+				"navigationBarTitleText": "结算"
 			}
 		}
 	],
