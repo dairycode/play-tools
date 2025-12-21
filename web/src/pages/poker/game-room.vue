@@ -63,7 +63,7 @@
             :disabled="!allReady"
             @click="handleStart"
           >
-            {{ allReady ? '开始游戏' : '等待玩家准备...' }}
+            {{ startButtonText }}
           </button>
         </view>
       </view>
@@ -188,7 +188,27 @@ const currentUserReady = computed(() => {
 
 const allReady = computed(() => {
   if (!roomDetail.value?.members) return false
-  return roomDetail.value.members.every(m => m.isReady)
+  // 检查房间是否人齐
+  const isFull = roomDetail.value.members.length === roomDetail.value.maxPlayers
+  // 检查所有人是否都准备
+  const allMembersReady = roomDetail.value.members.every(m => m.isReady)
+  return isFull && allMembersReady
+})
+
+const startButtonText = computed(() => {
+  if (!roomDetail.value?.members) return '等待玩家加入...'
+  const currentCount = roomDetail.value.members.length
+  const maxCount = roomDetail.value.maxPlayers
+  const isFull = currentCount === maxCount
+  const allMembersReady = roomDetail.value.members.every(m => m.isReady)
+
+  if (!isFull) {
+    return `等待玩家加入 (${currentCount}/${maxCount})`
+  }
+  if (!allMembersReady) {
+    return '等待玩家准备...'
+  }
+  return '开始游戏'
 })
 
 const otherMembers = computed(() => {
