@@ -103,7 +103,8 @@
 
           <!-- Amount Input -->
           <input
-            class="w-full px-4 py-3 bg-white/10 rounded-xl text-white text-center text-xl font-bold mb-4 border-2 border-white/20"
+            style="width: calc(100% - 2.25rem);"
+            class="px-4 py-3 bg-white/10 rounded-xl text-white text-center text-xl font-bold mb-4 border-2 border-white/20"
             v-model.number="transferAmount"
             type="digit"
             placeholder="输入金额"
