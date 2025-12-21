@@ -1,50 +1,62 @@
 <template>
-  <view class="container">
-    <view class="header">
-      <view class="title">游戏结算</view>
-      <view class="subtitle">根据记账记录自动计算</view>
-    </view>
+  <view class="min-h-screen game-bg p-4 md:p-6">
+    <view class="w-full max-w-2xl mx-auto relative z-10 animate-fade-in">
+      <!-- Header -->
+      <view class="text-center mb-8">
+        <view class="text-4xl font-bold text-white text-glow mb-2">游戏结算</view>
+        <view class="text-sm text-white/70">根据记账记录自动计算</view>
+      </view>
 
-    <view v-if="settlements.length > 0" class="settlements">
-      <view
-        v-for="(item, index) in settlements"
-        :key="index"
-        class="settlement-item"
-      >
-        <view class="from-player">
-          <view class="player-avatar">
-            {{ item.fromNickname.substring(0, 1) }}
+      <!-- Settlements List -->
+      <view v-if="settlements.length > 0" class="space-y-4 mb-6">
+        <view
+          v-for="(item, index) in settlements"
+          :key="index"
+          class="glass-card p-6"
+        >
+          <view class="flex items-center justify-between">
+            <!-- From Player -->
+            <view class="flex flex-col items-center flex-1">
+              <view class="w-20 h-20 rounded-full bg-gradient-to-br from-primary-from to-primary-to flex items-center justify-center mb-2">
+                <text class="text-2xl font-bold text-white">{{ item.fromNickname.substring(0, 1) }}</text>
+              </view>
+              <view class="text-sm text-white text-center">{{ item.fromNickname }}</view>
+            </view>
+
+            <!-- Arrow and Amount -->
+            <view class="flex flex-col items-center mx-6">
+              <view class="text-4xl text-success-from mb-2">→</view>
+              <view class="text-2xl font-bold text-danger-from">¥{{ item.amount }}</view>
+            </view>
+
+            <!-- To Player -->
+            <view class="flex flex-col items-center flex-1">
+              <view class="w-20 h-20 rounded-full bg-gradient-to-br from-primary-from to-primary-to flex items-center justify-center mb-2">
+                <text class="text-2xl font-bold text-white">{{ item.toNickname.substring(0, 1) }}</text>
+              </view>
+              <view class="text-sm text-white text-center">{{ item.toNickname }}</view>
+            </view>
           </view>
-          <view class="player-name">{{ item.fromNickname }}</view>
-        </view>
-
-        <view class="arrow-wrapper">
-          <view class="arrow">→</view>
-          <view class="amount">¥{{ item.amount }}</view>
-        </view>
-
-        <view class="to-player">
-          <view class="player-avatar">
-            {{ item.toNickname.substring(0, 1) }}
-          </view>
-          <view class="player-name">{{ item.toNickname }}</view>
         </view>
       </view>
-    </view>
 
-    <view v-else class="no-settlement">
-      <text class="no-settlement-text">无需结算</text>
-    </view>
-
-    <view class="summary">
-      <view class="summary-title">结算说明</view>
-      <view class="summary-text">
-        以上是最优结算方案，通过最少的转账次数完成所有账务结清。
+      <!-- No Settlement -->
+      <view v-else class="glass-card p-16 text-center mb-6">
+        <text class="text-2xl text-white/50">无需结算</text>
       </view>
-    </view>
 
-    <view class="button-group">
-      <button class="back-btn" @click="backToHome">返回首页</button>
+      <!-- Summary -->
+      <view class="glass-card p-6 mb-6">
+        <view class="text-lg font-bold text-white mb-3">结算说明</view>
+        <view class="text-sm text-white/70 leading-relaxed">
+          以上是最优结算方案，通过最少的转账次数完成所有账务结清。
+        </view>
+      </view>
+
+      <!-- Action Button -->
+      <button class="w-full btn-primary text-base" @click="backToHome">
+        返回首页
+      </button>
     </view>
   </view>
 </template>
@@ -92,140 +104,7 @@ const backToHome = () => {
 </script>
 
 <style scoped>
-.container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #1AAD19 0%, #0e7d0e 100%);
-  padding: 40rpx;
-}
-
-.header {
-  margin-bottom: 40rpx;
-  text-align: center;
-}
-
-.title {
-  font-size: 48rpx;
-  font-weight: bold;
-  color: #fff;
-  margin-bottom: 10rpx;
-}
-
-.subtitle {
-  font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.settlements {
-  margin-bottom: 40rpx;
-}
-
-.settlement-item {
-  background-color: rgba(255, 255, 255, 0.95);
-  border-radius: 20rpx;
-  padding: 40rpx;
-  margin-bottom: 20rpx;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.from-player,
-.to-player {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-}
-
-.player-avatar {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 40rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #fff;
-  margin-bottom: 10rpx;
-}
-
-.player-name {
-  font-size: 26rpx;
-  color: #333;
-  text-align: center;
-  word-break: break-all;
-}
-
-.arrow-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0 30rpx;
-}
-
-.arrow {
-  font-size: 48rpx;
-  color: #1AAD19;
-  margin-bottom: 10rpx;
-}
-
-.amount {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #ff4444;
-}
-
-.no-settlement {
-  background-color: rgba(255, 255, 255, 0.95);
-  border-radius: 20rpx;
-  padding: 100rpx 40rpx;
-  text-align: center;
-  margin-bottom: 40rpx;
-}
-
-.no-settlement-text {
-  font-size: 32rpx;
-  color: #999;
-}
-
-.summary {
-  background-color: rgba(255, 255, 255, 0.95);
-  border-radius: 20rpx;
-  padding: 30rpx;
-  margin-bottom: 40rpx;
-}
-
-.summary-title {
-  font-size: 30rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 15rpx;
-}
-
-.summary-text {
-  font-size: 26rpx;
-  color: #666;
-  line-height: 1.6;
-}
-
-.button-group {
-  margin-top: 40rpx;
-}
-
-.back-btn {
-  width: 100%;
-  height: 90rpx;
-  background-color: #fff;
-  border-radius: 45rpx;
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #1AAD19;
-  border: none;
-}
-
-.back-btn::after {
+button::after {
   border: none;
 }
 </style>

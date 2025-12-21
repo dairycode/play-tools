@@ -1,24 +1,39 @@
 <template>
-  <view class="login-container">
+  <view class="min-h-screen game-bg flex items-center justify-center p-4 md:p-6">
     <view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
 
-    <view class="login-content">
-      <view class="title">{{ isLoginMode ? '欢迎登录' : '注册账号' }}</view>
-      <view class="subtitle">游戏助手小程序</view>
+    <view class="w-full max-w-md relative z-10 animate-fade-in">
+      <!-- Logo/Icon -->
+      <view class="flex justify-center mb-4">
+        <view class="glass-card w-20 h-20 flex items-center justify-center">
+          <text class="text-5xl">🎮</text>
+        </view>
+      </view>
 
-      <view class="form">
-        <view class="form-item">
+      <!-- Title -->
+      <view class="text-center mb-8">
+        <view class="text-3xl font-bold text-white text-glow mb-2">
+          {{ isLoginMode ? '欢迎登录' : '注册账号' }}
+        </view>
+        <view class="text-sm text-white/70">游戏助手小程序</view>
+      </view>
+
+      <!-- Form Card -->
+      <view class="glass-card p-6 md:p-8 space-y-4">
+        <!-- Username -->
+        <view>
           <input
-            class="input"
+            class="input-glass text-base"
             v-model="username"
             placeholder="请输入用户名"
             maxlength="20"
           />
         </view>
 
-        <view class="form-item">
+        <!-- Password -->
+        <view>
           <input
-            class="input"
+            class="input-glass text-base"
             v-model="password"
             type="password"
             placeholder="请输入密码"
@@ -26,21 +41,24 @@
           />
         </view>
 
-        <view class="form-item" v-if="!isLoginMode">
+        <!-- Nickname (Register mode only) -->
+        <view v-if="!isLoginMode">
           <input
-            class="input"
+            class="input-glass text-base"
             v-model="nickname"
             placeholder="请输入昵称"
             maxlength="20"
           />
         </view>
 
-        <button class="submit-btn" @click="handleSubmit">
+        <!-- Submit Button -->
+        <button class="w-full btn-primary text-base" @click="handleSubmit">
           {{ isLoginMode ? '登录' : '注册' }}
         </button>
 
-        <view class="switch-mode" @click="switchMode">
-          {{ isLoginMode ? '没有账号？去注册' : '已有账号？去登录' }}
+        <!-- Switch Mode -->
+        <view class="text-center text-sm text-white/90 mt-4 cursor-pointer" @click="switchMode">
+          {{ isLoginMode ? '没有账号？去注册' : '已有账号?去登录' }}
         </view>
       </view>
     </view>
@@ -165,80 +183,16 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
-.login-container {
-  width: 100vw;
-  height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  flex-direction: column;
-}
-
 .status-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
+  z-index: 999;
 }
 
-.login-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 80rpx 60rpx;
-}
-
-.title {
-  font-size: 48rpx;
-  font-weight: bold;
-  color: #fff;
-  margin-bottom: 20rpx;
-}
-
-.subtitle {
-  font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 100rpx;
-}
-
-.form {
-  width: 100%;
-}
-
-.form-item {
-  margin-bottom: 40rpx;
-}
-
-.input {
-  width: 100%;
-  height: 90rpx;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 45rpx;
-  padding: 0 40rpx;
-  font-size: 28rpx;
-  box-sizing: border-box;
-}
-
-.submit-btn {
-  width: 100%;
-  height: 90rpx;
-  background: #fff;
-  border-radius: 45rpx;
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #667eea;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 40rpx;
+/* Remove button default styles for uniapp */
+button::after {
   border: none;
-}
-
-.submit-btn::after {
-  border: none;
-}
-
-.switch-mode {
-  text-align: center;
-  font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.9);
-  margin-top: 40rpx;
 }
 </style>

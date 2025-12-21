@@ -1,22 +1,30 @@
 <template>
-  <view class="container">
-    <view class="header">
-      <view class="title">加入房间</view>
-      <view class="subtitle">输入8位房间ID即可加入</view>
-    </view>
-
-    <view class="form">
-      <view class="form-item">
-        <view class="label">房间ID</view>
-        <input
-          class="input"
-          v-model="roomId"
-          placeholder="请输入8位房间ID"
-          maxlength="8"
-        />
+  <view class="min-h-screen game-bg flex items-center justify-center p-4 md:p-6">
+    <view class="w-full max-w-md relative z-10 animate-fade-in">
+      <!-- Header -->
+      <view class="mb-8">
+        <view class="text-3xl font-bold text-white text-glow mb-2">加入房间</view>
+        <view class="text-sm text-white/70">输入8位房间ID即可加入</view>
       </view>
 
-      <button class="join-btn" @click="handleJoin">加入房间</button>
+      <!-- Form Card -->
+      <view class="glass-card p-6 md:p-8">
+        <!-- Room ID Input -->
+        <view class="mb-6">
+          <view class="text-base font-semibold text-white mb-3">房间ID</view>
+          <input
+            class="w-full px-4 py-4 bg-white/10 rounded-xl text-white text-center text-2xl font-bold tracking-wider border-2 border-white/20 focus:border-primary-from/60 transition-all"
+            v-model="roomId"
+            placeholder="请输入8位ID"
+            maxlength="8"
+          />
+        </view>
+
+        <!-- Join Button -->
+        <button class="w-full btn-success text-base mt-4" @click="handleJoin">
+          加入房间
+        </button>
+      </view>
     </view>
   </view>
 </template>
@@ -82,71 +90,7 @@ const handleJoin = async () => {
 </script>
 
 <style scoped>
-.container {
-  min-height: 100vh;
-  background-color: #f5f5f5;
-  padding: 40rpx;
-}
-
-.header {
-  margin-bottom: 60rpx;
-}
-
-.title {
-  font-size: 44rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10rpx;
-}
-
-.subtitle {
-  font-size: 26rpx;
-  color: #999;
-}
-
-.form {
-  background-color: #fff;
-  border-radius: 16rpx;
-  padding: 40rpx;
-}
-
-.form-item {
-  margin-bottom: 40rpx;
-}
-
-.label {
-  font-size: 28rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20rpx;
-}
-
-.input {
-  width: 100%;
-  height: 80rpx;
-  background-color: #f5f5f5;
-  border-radius: 10rpx;
-  padding: 0 30rpx;
-  font-size: 32rpx;
-  font-weight: bold;
-  text-align: center;
-  letter-spacing: 4rpx;
-  box-sizing: border-box;
-}
-
-.join-btn {
-  width: 100%;
-  height: 90rpx;
-  background: linear-gradient(135deg, #1AAD19 0%, #0e7d0e 100%);
-  border-radius: 45rpx;
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #fff;
-  border: none;
-  margin-top: 40rpx;
-}
-
-.join-btn::after {
+button::after {
   border: none;
 }
 </style>

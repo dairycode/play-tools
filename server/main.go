@@ -74,11 +74,11 @@ func main() {
 	}
 
 	// 启动服务器
-	log.Println("Server is running on :8080")
+	log.Println("Server is running on :8081")
 	log.Println("Access URLs:")
-	log.Println("  Local:   http://localhost:8080")
-	log.Println("  Network: http://192.168.0.102:8080")
-	if err := r.Run("0.0.0.0:8080"); err != nil {
+	log.Println("  Local:   http://localhost:8081")
+	log.Println("  Network: http://192.168.0.102:8081")
+	if err := r.Run("0.0.0.0:8081"); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}
 }

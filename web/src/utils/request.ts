@@ -5,10 +5,10 @@ const getBaseUrl = () => {
   if (typeof window !== 'undefined' && window.location) {
     const hostname = window.location.hostname
     // 如果是局域网IP或localhost，使用相同的host
-    return `http://${hostname}:8080/api`
+    return `http://${hostname}:8081/api`
   }
   // 默认使用localhost（用于非H5环境）
-  return 'http://localhost:8080/api'
+  return 'http://localhost:8081/api'
 }
 
 const BASE_URL = getBaseUrl()

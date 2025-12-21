@@ -1,143 +1,158 @@
 <template>
-  <view class="container">
-    <view class="header">
-      <view class="room-title">
-        <view class="room-name">{{ roomDetail?.name }}</view>
-        <view class="room-id">ID: {{ roomId }}</view>
-      </view>
-      <button
-        v-if="roomDetail?.status === 'waiting'"
-        class="share-btn"
-        size="mini"
-        @click="handleShare"
-      >
-        邀请好友
-      </button>
-      <button
-        v-if="roomDetail?.isOwner && roomDetail?.status === 'playing'"
-        class="finish-btn"
-        size="mini"
-        @click="handleFinish"
-      >
-        结束游戏
-      </button>
-    </view>
-
-    <!-- 等待中状态 -->
-    <view v-if="roomDetail?.status === 'waiting'" class="waiting-section">
-      <view class="section-title">
-        房间成员 ({{ roomDetail?.members?.length || 0 }}/{{ roomDetail?.maxPlayers || 0 }}人)
-      </view>
-      <view class="members-grid">
-        <view
-          v-for="member in roomDetail?.members"
-          :key="member.userId"
-          class="member-card"
-        >
-          <view class="member-avatar">
-            {{ member.nickname.substring(0, 1) }}
-          </view>
-          <view class="member-name">{{ member.nickname }}</view>
-          <view :class="['ready-status', { ready: member.isReady }]">
-            {{ member.isReady ? '已准备' : '未准备' }}
-          </view>
+  <view class="min-h-screen game-bg p-4 md:p-6">
+    <view class="w-full max-w-4xl mx-auto relative z-10">
+      <!-- Header -->
+      <view class="flex items-center justify-between mb-6 animate-fade-in">
+        <view class="flex-1">
+          <view class="text-2xl font-bold text-white text-glow">{{ roomDetail?.name }}</view>
+          <view class="text-sm text-white/80 mt-1">ID: {{ roomId }}</view>
         </view>
-      </view>
-
-      <!-- 准备/开始按钮 -->
-      <view class="action-btns">
         <button
-          v-if="!roomDetail?.isOwner"
-          :class="['ready-btn', { ready: currentUserReady }]"
-          @click="handleToggleReady"
+          v-if="roomDetail?.status === 'waiting'"
+          class="btn-secondary text-sm"
+          @click="handleShare"
         >
-          {{ currentUserReady ? '取消准备' : '准备' }}
+          邀请好友
         </button>
         <button
-          v-if="roomDetail?.isOwner"
-          class="start-btn"
-          :disabled="!allReady"
-          @click="handleStart"
+          v-if="roomDetail?.isOwner && roomDetail?.status === 'playing'"
+          class="btn-danger text-sm"
+          @click="handleFinish"
         >
-          {{ allReady ? '开始游戏' : '等待玩家准备...' }}
+          结束游戏
         </button>
       </view>
-    </view>
 
-    <!-- 游戏中状态 -->
-    <view v-if="roomDetail?.status === 'playing'" class="playing-section">
-      <view class="members-section">
-        <view class="section-title">房间成员 ({{ roomDetail?.members?.length || 0 }}人)</view>
-        <view class="members-grid">
+      <!-- Waiting Status -->
+      <view v-if="roomDetail?.status === 'waiting'" class="animate-fade-in space-y-4">
+        <view class="text-center text-lg font-semibold text-white mb-4">
+          房间成员 ({{ roomDetail?.members?.length || 0 }}/{{ roomDetail?.maxPlayers || 0 }}人)
+        </view>
+
+        <!-- Members Grid -->
+        <view class="grid grid-cols-2 md:grid-cols-3 gap-3">
           <view
             v-for="member in roomDetail?.members"
             :key="member.userId"
-            class="member-card"
+            class="glass-card p-4"
           >
-            <view class="member-avatar">
-              {{ member.nickname.substring(0, 1) }}
-            </view>
-            <view class="member-name">{{ member.nickname }}</view>
-            <view :class="['member-balance', getBalanceClass(member.balance)]">
-              {{ member.balance >= 0 ? '+' : '' }}{{ member.balance }}
+            <view class="flex flex-col items-center">
+              <view class="w-16 h-16 rounded-full bg-gradient-to-br from-primary-from to-primary-to flex items-center justify-center text-white font-bold text-xl mb-2">
+                {{ member.nickname.substring(0, 1) }}
+              </view>
+              <view class="text-white text-sm mb-1">{{ member.nickname }}</view>
+              <view :class="['text-xs', member.isReady ? 'text-success-from font-bold' : 'text-white/50']">
+                {{ member.isReady ? '已准备' : '未准备' }}
+              </view>
             </view>
           </view>
         </view>
+
+        <!-- Action Buttons -->
+        <view class="glass-card p-6 mt-4">
+          <button
+            v-if="!roomDetail?.isOwner"
+            :class="['w-full', currentUserReady ? 'btn-secondary' : 'btn-success']"
+            @click="handleToggleReady"
+          >
+            {{ currentUserReady ? '取消准备' : '准备' }}
+          </button>
+          <button
+            v-if="roomDetail?.isOwner"
+            class="w-full btn-success"
+            :disabled="!allReady"
+            @click="handleStart"
+          >
+            {{ allReady ? '开始游戏' : '等待玩家准备...' }}
+          </button>
+        </view>
       </view>
 
-      <view class="transfer-section">
-        <view class="section-title">我要转账</view>
-        <view class="transfer-form">
-          <view class="amount-input-wrapper">
-            <input
-              class="amount-input"
-              v-model.number="transferAmount"
-              type="digit"
-              placeholder="输入金额"
-            />
+      <!-- Playing Status -->
+      <view v-if="roomDetail?.status === 'playing'" class="animate-fade-in space-y-4">
+        <!-- Members Section -->
+        <view class="glass-card p-6">
+          <view class="text-lg font-semibold text-white mb-4">
+            房间成员 ({{ roomDetail?.members?.length || 0 }}人)
           </view>
+          <view class="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <view
+              v-for="member in roomDetail?.members"
+              :key="member.userId"
+              class="bg-white/5 backdrop-blur-md rounded-xl border-2 border-white/10 p-4"
+            >
+              <view class="flex flex-col items-center">
+                <view class="w-16 h-16 rounded-full bg-gradient-to-br from-primary-from to-primary-to flex items-center justify-center text-white font-bold text-xl mb-2">
+                  {{ member.nickname.substring(0, 1) }}
+                </view>
+                <view class="text-white text-sm mb-1">{{ member.nickname }}</view>
+                <view :class="[
+                  'text-base font-bold',
+                  member.balance > 0 ? 'text-danger-from' : member.balance < 0 ? 'text-success-from' : 'text-white/50'
+                ]">
+                  {{ member.balance >= 0 ? '+' : '' }}{{ member.balance }}
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
 
-          <view class="quick-amounts">
+        <!-- Transfer Section -->
+        <view class="glass-card p-6">
+          <view class="text-lg font-semibold text-white mb-4">我要转账</view>
+
+          <!-- Amount Input -->
+          <input
+            class="w-full px-4 py-3 bg-white/10 rounded-xl text-white text-center text-xl font-bold mb-4 border-2 border-white/20"
+            v-model.number="transferAmount"
+            type="digit"
+            placeholder="输入金额"
+          />
+
+          <!-- Quick Amounts -->
+          <view class="grid grid-cols-3 gap-2 mb-4">
             <view
               v-for="amount in quickAmounts"
               :key="amount"
-              class="quick-amount"
+              class="h-12 bg-white/10 rounded-xl flex items-center justify-center text-white/70 text-sm cursor-pointer hover:bg-white/15 transition-all"
               @click="setAmount(amount)"
             >
               {{ amount }}
             </view>
           </view>
 
-          <view class="target-members">
+          <!-- Target Members -->
+          <view class="grid grid-cols-4 gap-3">
             <view
               v-for="member in otherMembers"
               :key="member.userId"
-              class="target-member"
+              class="flex flex-col items-center cursor-pointer"
               @click="handleTransfer(member)"
             >
-              <view class="target-avatar">
+              <view class="w-16 h-16 rounded-full bg-gradient-to-br from-primary-from to-primary-to flex items-center justify-center text-white font-bold text-lg mb-2">
                 {{ member.nickname.substring(0, 1) }}
               </view>
-              <view class="target-name">{{ member.nickname }}</view>
+              <view class="text-white/80 text-xs text-center">{{ member.nickname }}</view>
             </view>
           </view>
         </view>
-      </view>
 
-      <view v-if="roomDetail?.transactions && roomDetail.transactions.length > 0" class="history-section">
-        <view class="section-title">转账记录</view>
-        <view class="history-list">
-          <view
-            v-for="tx in roomDetail.transactions"
-            :key="tx.id"
-            class="history-item"
-          >
-            <view class="history-content">
-              <text class="from-user">{{ tx.fromNickname }}</text>
-              <text class="arrow">→</text>
-              <text class="to-user">{{ tx.toNickname }}</text>
+        <!-- Transaction History -->
+        <view v-if="roomDetail?.transactions && roomDetail.transactions.length > 0" class="glass-card p-6">
+          <view class="text-lg font-semibold text-white mb-4">转账记录</view>
+          <view class="space-y-2 max-h-96 overflow-y-auto">
+            <view
+              v-for="tx in roomDetail.transactions"
+              :key="tx.id"
+              class="flex items-center justify-between p-3 bg-white/5 rounded-xl"
+            >
+              <view class="flex items-center gap-2 text-sm">
+                <text class="text-white/70">{{ tx.fromNickname }}</text>
+                <text class="text-success-from">→</text>
+                <text class="text-white font-bold">{{ tx.toNickname }}</text>
+              </view>
+              <view class="text-danger-from font-bold">¥{{ tx.amount }}</view>
             </view>
-            <view class="history-amount">¥{{ tx.amount }}</view>
           </view>
         </view>
       </view>
@@ -408,287 +423,26 @@ const handleFinish = () => {
 </script>
 
 <style scoped>
-.container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #1AAD19 0%, #0e7d0e 100%);
-  padding: 40rpx;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 30rpx;
-}
-
-.room-title {
-  flex: 1;
-}
-
-.room-name {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #fff;
-  margin-bottom: 5rpx;
-}
-
-.room-id {
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.share-btn,
-.finish-btn {
-  background-color: #fff;
-  color: #1AAD19;
-  font-weight: bold;
+button::after {
   border: none;
 }
 
-.waiting-section,
-.playing-section {
-  margin-top: 20rpx;
+/* Custom scrollbar for transaction history */
+.max-h-96::-webkit-scrollbar {
+  width: 4px;
 }
 
-.waiting-section > .section-title {
-  font-size: 30rpx;
-  font-weight: bold;
-  color: #fff;
-  margin-bottom: 20rpx;
-  text-align: center;
+.max-h-96::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
 }
 
-.members-section,
-.transfer-section,
-.history-section {
-  background-color: rgba(255, 255, 255, 0.95);
-  border-radius: 20rpx;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
+.max-h-96::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
 }
 
-.section-title {
-  font-size: 30rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20rpx;
-}
-
-.members-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20rpx;
-}
-
-.member-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20rpx;
-  background-color: #f5f5f5;
-  border-radius: 12rpx;
-}
-
-.member-avatar {
-  width: 60rpx;
-  height: 60rpx;
-  border-radius: 30rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24rpx;
-  font-weight: bold;
-  color: #fff;
-  margin-bottom: 8rpx;
-}
-
-.member-name {
-  font-size: 24rpx;
-  color: #333;
-  margin-bottom: 5rpx;
-  text-align: center;
-  word-break: break-all;
-}
-
-.ready-status {
-  font-size: 22rpx;
-  color: #999;
-}
-
-.ready-status.ready {
-  color: #1AAD19;
-  font-weight: bold;
-}
-
-.member-balance {
-  font-size: 26rpx;
-  font-weight: bold;
-}
-
-.member-balance.positive {
-  color: #ff4444;
-}
-
-.member-balance.negative {
-  color: #1AAD19;
-}
-
-.member-balance.zero {
-  color: #999;
-}
-
-.action-btns {
-  margin-top: 30rpx;
-  background-color: rgba(255, 255, 255, 0.95);
-  border-radius: 20rpx;
-  padding: 30rpx;
-}
-
-.ready-btn,
-.start-btn {
-  width: 100%;
-  height: 90rpx;
-  border-radius: 45rpx;
-  font-size: 32rpx;
-  font-weight: bold;
-  border: none;
-}
-
-.ready-btn {
-  background-color: #1AAD19;
-  color: #fff;
-}
-
-.ready-btn.ready {
-  background-color: #999;
-}
-
-.ready-btn::after,
-.start-btn::after {
-  border: none;
-}
-
-.start-btn {
-  background-color: #1AAD19;
-  color: #fff;
-}
-
-.start-btn:disabled {
-  background-color: #ccc;
-  color: #999;
-}
-
-.amount-input-wrapper {
-  margin-bottom: 20rpx;
-}
-
-.amount-input {
-  width: 100%;
-  height: 80rpx;
-  background-color: #f5f5f5;
-  border-radius: 10rpx;
-  padding: 0 30rpx;
-  font-size: 36rpx;
-  font-weight: bold;
-  text-align: center;
-  box-sizing: border-box;
-}
-
-.quick-amounts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15rpx;
-  margin-bottom: 30rpx;
-}
-
-.quick-amount {
-  flex: 0 0 calc(33.333% - 10rpx);
-  height: 60rpx;
-  background-color: #f5f5f5;
-  border-radius: 10rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26rpx;
-  color: #666;
-}
-
-.target-members {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20rpx;
-}
-
-.target-member {
-  flex: 0 0 calc(25% - 15rpx);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.target-avatar {
-  width: 70rpx;
-  height: 70rpx;
-  border-radius: 35rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28rpx;
-  font-weight: bold;
-  color: #fff;
-  margin-bottom: 8rpx;
-}
-
-.target-name {
-  font-size: 22rpx;
-  color: #666;
-  text-align: center;
-  word-break: break-all;
-}
-
-.history-list {
-  max-height: 400rpx;
-  overflow-y: auto;
-}
-
-.history-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20rpx;
-  background-color: #f5f5f5;
-  border-radius: 10rpx;
-  margin-bottom: 10rpx;
-}
-
-.history-item:last-child {
-  margin-bottom: 0;
-}
-
-.history-content {
-  flex: 1;
-  font-size: 26rpx;
-}
-
-.from-user {
-  color: #666;
-}
-
-.arrow {
-  margin: 0 10rpx;
-  color: #1AAD19;
-}
-
-.to-user {
-  color: #333;
-  font-weight: bold;
-}
-
-.history-amount {
-  font-size: 28rpx;
-  font-weight: bold;
-  color: #ff4444;
+.max-h-96::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 </style>

@@ -1,30 +1,44 @@
 <template>
-  <view class="account-container">
-    <view class="header">
-      <view class="avatar">
-        <text class="avatar-text">{{ avatarText }}</text>
-      </view>
-      <view class="user-info">
-        <view class="nickname">{{ userInfo?.nickname || '未设置昵称' }}</view>
-        <view class="username">@{{ userInfo?.username }}</view>
+  <view class="min-h-screen game-bg">
+    <!-- Header Profile Card -->
+    <view class="bg-gradient-to-br from-primary-from to-primary-to pt-16 pb-12 px-4 md:px-6">
+      <view class="w-full max-w-md mx-auto flex items-center">
+        <view class="w-24 h-24 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center mr-6">
+          <text class="text-5xl font-bold text-white">{{ avatarText }}</text>
+        </view>
+        <view class="flex-1">
+          <view class="text-3xl font-bold text-white mb-2">{{ userInfo?.nickname || '未设置昵称' }}</view>
+          <view class="text-sm text-white/80">@{{ userInfo?.username }}</view>
+        </view>
       </view>
     </view>
 
-    <view class="menu-list">
-      <view class="menu-item" @click="showEditNickname">
-        <view class="menu-left">
-          <text class="menu-icon">✏️</text>
-          <text class="menu-title">修改昵称</text>
+    <!-- Menu List -->
+    <view class="w-full max-w-md mx-auto px-4 md:px-6 -mt-8 relative z-10">
+      <view class="glass-card p-2">
+        <view
+          class="flex items-center justify-between p-4 cursor-pointer transition-all duration-300 hover:bg-white/5 rounded-xl"
+          @click="showEditNickname"
+        >
+          <view class="flex items-center">
+            <text class="text-3xl mr-4">✏️</text>
+            <text class="text-base text-white">修改昵称</text>
+          </view>
+          <text class="text-4xl text-white/30">›</text>
         </view>
-        <text class="menu-arrow">›</text>
-      </view>
 
-      <view class="menu-item" @click="handleLogout">
-        <view class="menu-left">
-          <text class="menu-icon">🚪</text>
-          <text class="menu-title">退出登录</text>
+        <view class="h-px bg-white/10 my-1"></view>
+
+        <view
+          class="flex items-center justify-between p-4 cursor-pointer transition-all duration-300 hover:bg-white/5 rounded-xl"
+          @click="handleLogout"
+        >
+          <view class="flex items-center">
+            <text class="text-3xl mr-4">🚪</text>
+            <text class="text-base text-white">退出登录</text>
+          </view>
+          <text class="text-4xl text-white/30">›</text>
         </view>
-        <text class="menu-arrow">›</text>
       </view>
     </view>
   </view>
@@ -113,85 +127,5 @@ const handleLogout = () => {
 </script>
 
 <style scoped>
-.account-container {
-  min-height: 100vh;
-  background-color: #f5f5f5;
-}
-
-.header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 60rpx 40rpx;
-  display: flex;
-  align-items: center;
-}
-
-.avatar {
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: 60rpx;
-  background-color: rgba(255, 255, 255, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 30rpx;
-}
-
-.avatar-text {
-  font-size: 48rpx;
-  font-weight: bold;
-  color: #fff;
-}
-
-.user-info {
-  flex: 1;
-}
-
-.nickname {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #fff;
-  margin-bottom: 10rpx;
-}
-
-.username {
-  font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.menu-list {
-  margin-top: 20rpx;
-  background-color: #fff;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 30rpx 40rpx;
-  border-bottom: 1rpx solid #f0f0f0;
-}
-
-.menu-item:last-child {
-  border-bottom: none;
-}
-
-.menu-left {
-  display: flex;
-  align-items: center;
-}
-
-.menu-icon {
-  font-size: 36rpx;
-  margin-right: 20rpx;
-}
-
-.menu-title {
-  font-size: 30rpx;
-  color: #333;
-}
-
-.menu-arrow {
-  font-size: 48rpx;
-  color: #ccc;
-}
+/* No custom styles needed - all using Tailwind */
 </style>

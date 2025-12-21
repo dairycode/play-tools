@@ -1,36 +1,50 @@
 <template>
-  <view class="container">
-    <view class="header">
-      <view class="title">创建房间</view>
-      <view class="subtitle">输入房间名称，创建后分享给好友加入</view>
-    </view>
-
-    <view class="form">
-      <view class="form-item">
-        <view class="label">房间名称</view>
-        <input
-          class="input"
-          v-model="roomName"
-          placeholder="例如：周末德州局"
-          maxlength="20"
-        />
+  <view class="min-h-screen game-bg flex items-center justify-center p-4 md:p-6">
+    <view class="w-full max-w-md relative z-10 animate-fade-in">
+      <!-- Header -->
+      <view class="mb-8">
+        <view class="text-3xl font-bold text-white text-glow mb-2">创建房间</view>
+        <view class="text-sm text-white/70">输入房间名称，创建后分享给好友加入</view>
       </view>
 
-      <view class="form-item">
-        <view class="label">房间人数</view>
-        <view class="player-count-grid">
-          <view
-            v-for="count in [2, 3, 4, 5, 6, 7, 8, 9, 10]"
-            :key="count"
-            :class="['count-option', { active: maxPlayers === count }]"
-            @click="maxPlayers = count"
-          >
-            {{ count }}人
+      <!-- Form Card -->
+      <view class="glass-card p-6 md:p-8">
+        <!-- Room Name -->
+        <view class="mb-6">
+          <view class="text-base font-semibold text-white mb-3">房间名称</view>
+          <input
+            class="input-glass text-base"
+            v-model="roomName"
+            placeholder="例如：周末德州局"
+            maxlength="20"
+          />
+        </view>
+
+        <!-- Player Count -->
+        <view class="mb-6">
+          <view class="text-base font-semibold text-white mb-3">房间人数</view>
+          <view class="grid grid-cols-5 gap-2">
+            <view
+              v-for="count in [2, 3, 4, 5, 6, 7, 8, 9, 10]"
+              :key="count"
+              :class="[
+                'h-14 rounded-xl flex items-center justify-center text-sm cursor-pointer transition-all duration-300',
+                maxPlayers === count
+                  ? 'bg-gradient-to-br from-primary-from to-primary-to text-white font-bold shadow-glow-blue'
+                  : 'bg-white/10 text-white/60 hover:bg-white/15'
+              ]"
+              @click="maxPlayers = count"
+            >
+              {{ count }}人
+            </view>
           </view>
         </view>
-      </view>
 
-      <button class="create-btn" @click="handleCreate">创建房间</button>
+        <!-- Create Button -->
+        <button class="w-full btn-primary text-base mt-4" @click="handleCreate">
+          创建房间
+        </button>
+      </view>
     </view>
   </view>
 </template>
@@ -91,92 +105,7 @@ const handleCreate = async () => {
 </script>
 
 <style scoped>
-.container {
-  min-height: 100vh;
-  background-color: #f5f5f5;
-  padding: 40rpx;
-}
-
-.header {
-  margin-bottom: 60rpx;
-}
-
-.title {
-  font-size: 44rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10rpx;
-}
-
-.subtitle {
-  font-size: 26rpx;
-  color: #999;
-}
-
-.form {
-  background-color: #fff;
-  border-radius: 16rpx;
-  padding: 40rpx;
-}
-
-.form-item {
-  margin-bottom: 40rpx;
-}
-
-.label {
-  font-size: 28rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20rpx;
-}
-
-.input {
-  width: 100%;
-  height: 80rpx;
-  background-color: #f5f5f5;
-  border-radius: 10rpx;
-  padding: 0 30rpx;
-  font-size: 28rpx;
-  box-sizing: border-box;
-}
-
-.player-count-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 15rpx;
-}
-
-.count-option {
-  height: 70rpx;
-  background-color: #f5f5f5;
-  border-radius: 10rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26rpx;
-  color: #666;
-  transition: all 0.3s;
-}
-
-.count-option.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  font-weight: bold;
-}
-
-.create-btn {
-  width: 100%;
-  height: 90rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 45rpx;
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #fff;
-  border: none;
-  margin-top: 40rpx;
-}
-
-.create-btn::after {
+button::after {
   border: none;
 }
 </style>
