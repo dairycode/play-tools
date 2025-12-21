@@ -86,18 +86,17 @@ const handleCreate = async () => {
 
     uni.hideLoading()
 
-    // 显示房间ID，方便分享
-    uni.showModal({
+    uni.showToast({
       title: '创建成功',
-      content: `房间ID: ${res.data.id}\n点击确定进入房间`,
-      showCancel: false,
-      success: () => {
-        // 跳转到游戏房间
-        uni.redirectTo({
-          url: `/pages/poker/game-room?roomId=${res.data.id}`
-        })
-      }
+      icon: 'success'
     })
+
+    // 直接跳转到游戏房间
+    setTimeout(() => {
+      uni.redirectTo({
+        url: `/pages/poker/game-room?roomId=${res.data.id}`
+      })
+    }, 500)
   } catch (error) {
     uni.hideLoading()
   }

@@ -305,35 +305,14 @@ const handleShare = () => {
     inviteUrl = `/pages/poker/game-room?roomId=${roomId.value}&join=1`
   }
 
-  uni.showModal({
-    title: '邀请好友',
-    content: `房间ID: ${roomId.value}\n点击"复制链接"后发送给好友`,
-    confirmText: '复制链接',
-    cancelText: '复制ID',
-    success: (res) => {
-      if (res.confirm) {
-        // 复制完整链接
-        uni.setClipboardData({
-          data: inviteUrl,
-          success: () => {
-            uni.showToast({
-              title: '已复制邀请链接',
-              icon: 'success'
-            })
-          }
-        })
-      } else if (res.cancel) {
-        // 只复制房间ID
-        uni.setClipboardData({
-          data: roomId.value,
-          success: () => {
-            uni.showToast({
-              title: '已复制房间ID',
-              icon: 'success'
-            })
-          }
-        })
-      }
+  // 直接复制完整链接
+  uni.setClipboardData({
+    data: inviteUrl,
+    success: () => {
+      uni.showToast({
+        title: '已复制邀请链接',
+        icon: 'success'
+      })
     }
   })
 }
