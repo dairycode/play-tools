@@ -1,43 +1,43 @@
 <template>
   <view class="min-h-screen game-bg">
     <!-- Header Profile Card -->
-    <view class="bg-gradient-to-br from-primary-from to-primary-to pt-16 pb-12 px-4 md:px-6">
+    <view class="bg-gradient-to-br from-primary-from to-primary-to pt-16 pb-12 px-4 md-px-6">
       <view class="w-full max-w-md mx-auto flex items-center">
-        <view class="w-24 h-24 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center mr-6">
+        <view class="w-24 h-24 rounded-full bg-white-30 backdrop-blur-md flex items-center justify-center mr-6">
           <text class="text-5xl font-bold text-white">{{ avatarText }}</text>
         </view>
         <view class="flex-1">
           <view class="text-3xl font-bold text-white mb-2">{{ userInfo?.nickname || '未设置昵称' }}</view>
-          <view class="text-sm text-white/80">@{{ userInfo?.username }}</view>
+          <view class="text-sm text-white-80">@{{ userInfo?.username }}</view>
         </view>
       </view>
     </view>
 
     <!-- Menu List -->
-    <view class="w-full max-w-md mx-auto px-4 md:px-6 -mt-8 relative z-10">
+    <view class="w-full max-w-md mx-auto px-4 md-px-6 -mt-8 relative z-10">
       <view class="glass-card p-2">
         <view
-          class="flex items-center justify-between p-4 cursor-pointer transition-all duration-300 hover:bg-white/5 rounded-xl"
+          class="flex items-center justify-between p-4 cursor-pointer transition-all duration-300 hover-bg-white-5 rounded-xl"
           @click="showEditNickname"
         >
           <view class="flex items-center">
             <text class="text-3xl mr-4">✏️</text>
             <text class="text-base text-white">修改昵称</text>
           </view>
-          <text class="text-4xl text-white/30">›</text>
+          <text class="text-4xl text-white-30">›</text>
         </view>
 
-        <view class="h-px bg-white/10 my-1"></view>
+        <view class="h-px bg-white-10 my-1"></view>
 
         <view
-          class="flex items-center justify-between p-4 cursor-pointer transition-all duration-300 hover:bg-white/5 rounded-xl"
+          class="flex items-center justify-between p-4 cursor-pointer transition-all duration-300 hover-bg-white-5 rounded-xl"
           @click="handleLogout"
         >
           <view class="flex items-center">
             <text class="text-3xl mr-4">🚪</text>
             <text class="text-base text-white">退出登录</text>
           </view>
-          <text class="text-4xl text-white/30">›</text>
+          <text class="text-4xl text-white-30">›</text>
         </view>
       </view>
     </view>

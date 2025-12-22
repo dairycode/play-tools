@@ -1,14 +1,14 @@
 <template>
-  <view class="min-h-screen game-bg flex items-center justify-center p-4 md:p-6">
+  <view class="min-h-screen game-bg flex items-center justify-center p-4 md-p-6">
     <view class="w-full max-w-md relative z-10 animate-fade-in">
       <!-- Header -->
       <view class="mb-8">
         <view class="text-3xl font-bold text-white text-glow mb-2">创建房间</view>
-        <view class="text-sm text-white/70">输入房间名称，创建后分享给好友加入</view>
+        <view class="text-sm text-white-70">输入房间名称，创建后分享给好友加入</view>
       </view>
 
       <!-- Form Card -->
-      <view class="glass-card p-6 md:p-8">
+      <view class="glass-card p-6 md-p-8">
         <!-- Room Name -->
         <view class="mb-6">
           <view class="text-base font-semibold text-white mb-3">房间名称</view>
@@ -31,7 +31,7 @@
                 'h-14 rounded-xl flex items-center justify-center text-sm cursor-pointer transition-all duration-300',
                 maxPlayers === count
                   ? 'bg-gradient-to-br from-primary-from to-primary-to text-white font-bold shadow-glow-blue'
-                  : 'bg-white/10 text-white/60 hover:bg-white/15'
+                  : 'bg-white-10 text-white-60 hover-bg-white-15'
               ]"
               @click="maxPlayers = count"
             >

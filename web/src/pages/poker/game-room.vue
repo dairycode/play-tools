@@ -1,11 +1,11 @@
 <template>
-  <view class="min-h-screen game-bg p-4 md:p-6">
+  <view class="min-h-screen game-bg p-4 md-p-6">
     <view class="w-full max-w-4xl mx-auto relative z-10">
       <!-- Header -->
       <view class="flex items-center justify-between mb-6 animate-fade-in">
         <view class="flex-1">
           <view class="text-2xl font-bold text-white text-glow">{{ roomDetail?.name }}</view>
-          <view class="text-sm text-white/80 mt-1">ID: {{ roomId }}</view>
+          <view class="text-sm text-white-80 mt-1">ID: {{ roomId }}</view>
         </view>
         <button
           v-if="roomDetail?.status === 'waiting'"
@@ -30,7 +30,7 @@
         </view>
 
         <!-- Members Grid -->
-        <view class="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <view class="grid grid-cols-2 md-grid-cols-3 gap-3">
           <view
             v-for="member in roomDetail?.members"
             :key="member.userId"
@@ -41,7 +41,7 @@
                 {{ member.nickname.substring(0, 1) }}
               </view>
               <view class="text-white text-sm mb-1">{{ member.nickname }}</view>
-              <view :class="['text-xs', member.isReady ? 'text-success-from font-bold' : 'text-white/50']">
+              <view :class="['text-xs', member.isReady ? 'text-success-from font-bold' : 'text-white-50']">
                 {{ member.isReady ? '已准备' : '未准备' }}
               </view>
             </view>
@@ -75,11 +75,11 @@
           <view class="text-lg font-semibold text-white mb-4">
             房间成员 ({{ roomDetail?.members?.length || 0 }}人)
           </view>
-          <view class="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <view class="grid grid-cols-2 md-grid-cols-3 gap-3">
             <view
               v-for="member in roomDetail?.members"
               :key="member.userId"
-              class="bg-white/5 backdrop-blur-md rounded-xl border-2 border-white/10 p-4"
+              class="bg-white-5 backdrop-blur-md rounded-xl border-2 border-white-10 p-4"
             >
               <view class="flex flex-col items-center">
                 <view class="w-16 h-16 rounded-full bg-gradient-to-br from-primary-from to-primary-to flex items-center justify-center text-white font-bold text-xl mb-2">
@@ -88,7 +88,7 @@
                 <view class="text-white text-sm mb-1">{{ member.nickname }}</view>
                 <view :class="[
                   'text-base font-bold',
-                  member.balance > 0 ? 'text-danger-from' : member.balance < 0 ? 'text-success-from' : 'text-white/50'
+                  member.balance > 0 ? 'text-danger-from' : member.balance < 0 ? 'text-success-from' : 'text-white-50'
                 ]">
                   {{ member.balance >= 0 ? '+' : '' }}{{ member.balance }}
                 </view>
@@ -104,7 +104,7 @@
           <!-- Amount Input -->
           <input
             style="width: calc(100% - 2.25rem);"
-            class="px-4 py-3 bg-white/10 rounded-xl text-white text-center text-xl font-bold mb-4 border-2 border-white/20"
+            class="px-4 py-3 bg-white-10 rounded-xl text-white text-center text-xl font-bold mb-4 border-2 border-white-20"
             v-model.number="transferAmount"
             type="digit"
             placeholder="输入金额"
@@ -115,7 +115,7 @@
             <view
               v-for="amount in quickAmounts"
               :key="amount"
-              class="h-12 bg-white/10 rounded-xl flex items-center justify-center text-white/70 text-sm cursor-pointer hover:bg-white/15 transition-all"
+              class="h-12 bg-white-10 rounded-xl flex items-center justify-center text-white-70 text-sm cursor-pointer hover-bg-white-15 transition-all"
               @click="setAmount(amount)"
             >
               {{ amount }}
@@ -133,7 +133,7 @@
               <view class="w-16 h-16 rounded-full bg-gradient-to-br from-primary-from to-primary-to flex items-center justify-center text-white font-bold text-lg mb-2">
                 {{ member.nickname.substring(0, 1) }}
               </view>
-              <view class="text-white/80 text-xs text-center">{{ member.nickname }}</view>
+              <view class="text-white-80 text-xs text-center">{{ member.nickname }}</view>
             </view>
           </view>
         </view>
@@ -145,10 +145,10 @@
             <view
               v-for="tx in roomDetail.transactions"
               :key="tx.id"
-              class="flex items-center justify-between p-3 bg-white/5 rounded-xl"
+              class="flex items-center justify-between p-3 bg-white-5 rounded-xl"
             >
               <view class="flex items-center gap-2 text-sm">
-                <text class="text-white/70">{{ tx.fromNickname }}</text>
+                <text class="text-white-70">{{ tx.fromNickname }}</text>
                 <text class="text-success-from">→</text>
                 <text class="text-white font-bold">{{ tx.toNickname }}</text>
               </view>

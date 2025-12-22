@@ -1,10 +1,10 @@
 <template>
-  <view class="min-h-screen game-bg p-4 md:p-6">
+  <view class="min-h-screen game-bg p-4 md-p-6">
     <view class="w-full max-w-2xl mx-auto relative z-10 animate-fade-in">
       <!-- Header -->
       <view class="text-center mb-8">
         <view class="text-4xl font-bold text-white text-glow mb-2">游戏结算</view>
-        <view class="text-sm text-white/70">根据记账记录自动计算</view>
+        <view class="text-sm text-white-70">根据记账记录自动计算</view>
       </view>
 
       <!-- Settlements List -->
@@ -42,13 +42,13 @@
 
       <!-- No Settlement -->
       <view v-else class="glass-card p-16 text-center mb-6">
-        <text class="text-2xl text-white/50">无需结算</text>
+        <text class="text-2xl text-white-50">无需结算</text>
       </view>
 
       <!-- Summary -->
       <view class="glass-card p-6 mb-6">
         <view class="text-lg font-bold text-white mb-3">结算说明</view>
-        <view class="text-sm text-white/70 leading-relaxed">
+        <view class="text-sm text-white-70 leading-relaxed">
           以上是最优结算方案，通过最少的转账次数完成所有账务结清。
         </view>
       </view>

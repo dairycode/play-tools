@@ -1,5 +1,5 @@
 <template>
-  <view class="min-h-screen game-bg flex items-center justify-center p-4 md:p-6">
+  <view class="min-h-screen game-bg flex items-center justify-center p-4 md-p-6">
     <view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
 
     <view class="w-full max-w-md relative z-10 animate-fade-in">
@@ -15,11 +15,11 @@
         <view class="text-3xl font-bold text-white text-glow mb-2">
           {{ isLoginMode ? '欢迎登录' : '注册账号' }}
         </view>
-        <view class="text-sm text-white/70">游戏助手小程序</view>
+        <view class="text-sm text-white-70">游戏助手小程序</view>
       </view>
 
       <!-- Form Card -->
-      <view class="glass-card p-6 md:p-8 space-y-4">
+      <view class="glass-card p-6 md-p-8 space-y-4">
         <!-- Username -->
         <view>
           <input
@@ -57,7 +57,7 @@
         </button>
 
         <!-- Switch Mode -->
-        <view class="text-center text-sm text-white/90 mt-4 cursor-pointer" @click="switchMode">
+        <view class="text-center text-sm text-white-90 mt-4 cursor-pointer" @click="switchMode">
           {{ isLoginMode ? '没有账号？去注册' : '已有账号?去登录' }}
         </view>
       </view>

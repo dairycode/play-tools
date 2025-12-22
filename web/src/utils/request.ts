@@ -8,7 +8,7 @@ const getBaseUrl = () => {
     return `http://${hostname}:8081/api`
   }
   // 默认使用localhost（用于非H5环境）
-  return 'http://localhost:8081/api'
+  return 'http://192.168.0.102:8081/api'
 }
 
 const BASE_URL = getBaseUrl()
