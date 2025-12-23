@@ -1,6 +1,74 @@
+@import "tailwindcss";
+
+@theme {
+  /* Custom Colors */
+  --color-dark-bg: #0a1929;
+  --color-dark-card: rgb(255 255 255 / 0.05);
+  --color-dark-card-hover: rgb(255 255 255 / 0.08);
+
+  --color-glass-light: rgb(255 255 255 / 0.1);
+  --color-glass-lighter: rgb(255 255 255 / 0.15);
+  --color-glass-border: rgb(255 255 255 / 0.2);
+  --color-glass-border-light: rgb(255 255 255 / 0.1);
+
+  --color-primary-from: #4fc3f7;
+  --color-primary-to: #2196f3;
+
+  --color-success-from: #66bb6a;
+  --color-success-to: #4caf50;
+
+  --color-danger-from: #f44336;
+  --color-danger-to: #d32f2f;
+
+  /* Custom Backdrop Blur */
+  --backdrop-blur-xs: 2px;
+
+  /* Custom Box Shadows */
+  --shadow-glass: 0 8px 32px rgb(0 0 0 / 0.3);
+  --shadow-glow-blue: 0 4px 12px rgb(33 150 243 / 0.3);
+  --shadow-glow-blue-lg: 0 6px 16px rgb(33 150 243 / 0.4);
+  --shadow-glow-green: 0 4px 12px rgb(76 175 80 / 0.3);
+  --shadow-glow-green-lg: 0 6px 16px rgb(76 175 80 / 0.4);
+  --shadow-glow-red: 0 4px 12px rgb(244 67 54 / 0.3);
+  --shadow-glow-red-lg: 0 6px 16px rgb(244 67 54 / 0.4);
+
+  /* Custom Animations */
+  --ease-pulse-scale: cubic-bezier(0.4, 0, 0.6, 1);
+
+  @keyframes pulse-scale {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  --animate-pulse-scale: pulse-scale 2s ease-in-out infinite;
+  --animate-fade-in: fade-in 0.3s ease-out;
+}
+
 /* Base styles */
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Uni-app input fix */
+input,
+uni-input,
+.uni-input-wrapper {
+  box-sizing: border-box;
+}
+
+uni-input {
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* Fix for uni-app input placeholder */
+.uni-input-placeholder {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* Custom Utilities */
@@ -340,7 +408,7 @@ body {
 /* Input Glass */
 .input-glass {
   display: block;
-  width: calc(100% - 2.25rem);
+  width: 100%;
   padding: 0.75rem 1rem;
   background: rgba(255, 255, 255, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.2);
@@ -350,6 +418,7 @@ body {
   transition: all 0.3s;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  box-sizing: border-box;
 }
 
 .input-glass::placeholder {

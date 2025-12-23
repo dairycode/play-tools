@@ -21,33 +21,40 @@
       <!-- Form Card -->
       <view class="glass-card p-6 md-p-8 space-y-4">
         <!-- Username -->
-        <view>
+        <view class="input-wrapper">
           <input
             class="input-glass text-base"
             v-model="username"
             placeholder="请输入用户名"
             maxlength="20"
+            :focus="false"
+            confirm-type="next"
           />
         </view>
 
         <!-- Password -->
-        <view>
+        <view class="input-wrapper">
           <input
             class="input-glass text-base"
             v-model="password"
             type="password"
             placeholder="请输入密码"
             maxlength="20"
+            :focus="false"
+            :password="true"
+            confirm-type="done"
           />
         </view>
 
         <!-- Nickname (Register mode only) -->
-        <view v-if="!isLoginMode">
+        <view v-if="!isLoginMode" class="input-wrapper">
           <input
             class="input-glass text-base"
             v-model="nickname"
             placeholder="请输入昵称"
             maxlength="20"
+            :focus="false"
+            confirm-type="done"
           />
         </view>
 
@@ -189,6 +196,11 @@ const handleSubmit = async () => {
   left: 0;
   width: 100%;
   z-index: 999;
+}
+
+.input-wrapper {
+  position: relative;
+  z-index: 1;
 }
 
 /* Remove button default styles for uniapp */
