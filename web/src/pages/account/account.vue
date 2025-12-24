@@ -22,6 +22,7 @@
           <u-cell
             title="修改昵称"
             :isLink="true"
+            :border="false"
             @click="showEditNickname"
             :customStyle="{
               background: 'transparent',
@@ -38,6 +39,7 @@
           <u-cell
             title="退出登录"
             :isLink="true"
+            :border="false"
             @click="handleLogout"
             :customStyle="{
               background: 'transparent',
