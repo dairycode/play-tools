@@ -11,14 +11,24 @@
           v-if="roomDetail?.status === 'waiting'"
           text="邀请好友"
           @click="handleShare"
-          :customStyle="{ fontSize: '28rpx' }"
+          :customStyle="{
+            fontSize: '28rpx',
+            padding: '16rpx 32rpx',
+            height: 'auto',
+            width: 'auto'
+          }"
           :custom-class="'btn-secondary'"
         ></u-button>
         <u-button
           v-if="roomDetail?.isOwner && roomDetail?.status === 'playing'"
           text="结束游戏"
           @click="handleFinish"
-          :customStyle="{ fontSize: '28rpx' }"
+          :customStyle="{
+            fontSize: '28rpx',
+            padding: '16rpx 32rpx',
+            height: 'auto',
+            width: 'auto'
+          }"
           :custom-class="'btn-danger'"
         ></u-button>
       </view>
@@ -108,11 +118,11 @@
             v-model.number="transferAmount"
             type="digit"
             placeholder="输入金额"
+            color="#ffffff"
             :customStyle="{
               background: 'rgba(255, 255, 255, 0.1)',
               border: '2rpx solid rgba(255, 255, 255, 0.2)',
               borderRadius: '12rpx',
-              color: 'white',
               textAlign: 'center',
               fontSize: '48rpx',
               fontWeight: 'bold',

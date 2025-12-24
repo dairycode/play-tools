@@ -16,11 +16,11 @@
             v-model="roomName"
             placeholder="例如：周末德州局"
             :maxlength="20"
+            color="#ffffff"
             :customStyle="{
               background: 'rgba(255, 255, 255, 0.1)',
               border: '2rpx solid rgba(255, 255, 255, 0.2)',
               borderRadius: '12rpx',
-              color: 'white',
               padding: '24rpx 32rpx',
               fontSize: '32rpx'
             }"

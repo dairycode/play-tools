@@ -16,12 +16,12 @@
             v-model="roomId"
             placeholder="请输入8位ID"
             :maxlength="8"
+            color="#ffffff"
             :customStyle="{
               width: '100%',
               background: 'rgba(255, 255, 255, 0.1)',
               border: '2rpx solid rgba(255, 255, 255, 0.2)',
               borderRadius: '12rpx',
-              color: 'white',
               textAlign: 'center',
               fontSize: '48rpx',
               fontWeight: 'bold',

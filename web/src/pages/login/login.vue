@@ -26,11 +26,11 @@
             v-model="username"
             placeholder="请输入用户名"
             :maxlength="20"
+            color="#ffffff"
             :customStyle="{
               background: 'rgba(255, 255, 255, 0.1)',
               border: '2rpx solid rgba(255, 255, 255, 0.2)',
               borderRadius: '12rpx',
-              color: 'white',
               padding: '24rpx 32rpx',
               fontSize: '32rpx'
             }"
@@ -46,11 +46,11 @@
             placeholder="请输入密码"
             :password="true"
             :maxlength="20"
+            color="#ffffff"
             :customStyle="{
               background: 'rgba(255, 255, 255, 0.1)',
               border: '2rpx solid rgba(255, 255, 255, 0.2)',
               borderRadius: '12rpx',
-              color: 'white',
               padding: '24rpx 32rpx',
               fontSize: '32rpx'
             }"
@@ -64,11 +64,11 @@
             v-model="nickname"
             placeholder="请输入昵称"
             :maxlength="20"
+            color="#ffffff"
             :customStyle="{
               background: 'rgba(255, 255, 255, 0.1)',
               border: '2rpx solid rgba(255, 255, 255, 0.2)',
               borderRadius: '12rpx',
-              color: 'white',
               padding: '24rpx 32rpx',
               fontSize: '32rpx'
             }"
