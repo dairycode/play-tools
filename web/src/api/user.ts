@@ -36,3 +36,12 @@ export const updateUserInfo = (data: { nickname?: string; avatar?: string }) => 
     data
   })
 }
+
+// 修改密码
+export const changePassword = (data: { old_password: string; new_password: string }) => {
+  return request({
+    url: '/user/password',
+    method: 'PUT',
+    data
+  })
+}

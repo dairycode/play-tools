@@ -28,6 +28,12 @@ type UpdateUserRequest struct {
 	Avatar   string `json:"avatar"`
 }
 
+// ChangePasswordRequest 修改密码请求
+type ChangePasswordRequest struct {
+	OldPassword string `json:"old_password" binding:"required"`
+	NewPassword string `json:"new_password" binding:"required"`
+}
+
 // Register 用户注册
 func Register(c *gin.Context) {
 	var req RegisterRequest
@@ -210,5 +216,71 @@ func UpdateUserInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"msg":  "更新成功",
+	})
+}
+
+// ChangePassword 修改密码
+func ChangePassword(c *gin.Context) {
+	userID, _ := c.Get("userId")
+
+	var req ChangePasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code": 400,
+			"msg":  "参数错误",
+		})
+		return
+	}
+
+	// 查找用户
+	var user model.User
+	if err := database.DB.First(&user, userID).Error; err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 404,
+			"msg":  "用户不存在",
+		})
+		return
+	}
+
+	// 验证旧密码
+	if !utils.CheckPassword(req.OldPassword, user.Password) {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "旧密码错误",
+		})
+		return
+	}
+
+	// 密码长度验证
+	if len(req.NewPassword) < 6 {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "新密码长度不能少于6位",
+		})
+		return
+	}
+
+	// 加密新密码
+	hashedPassword, err := utils.HashPassword(req.NewPassword)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code": 500,
+			"msg":  "密码加密失败",
+		})
+		return
+	}
+
+	// 更新密码
+	if err := database.DB.Model(&model.User{}).Where("id = ?", userID).Update("password", hashedPassword).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code": 500,
+			"msg":  "修改密码失败",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  "修改密码成功",
 	})
 }

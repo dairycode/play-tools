@@ -56,6 +56,7 @@ func main() {
 			// 用户信息
 			authGroup.GET("/user/info", api.GetUserInfo)
 			authGroup.PUT("/user/update", api.UpdateUserInfo)
+			authGroup.PUT("/user/password", api.ChangePassword)
 
 			// 游戏相关接口
 			gameGroup := authGroup.Group("/game")

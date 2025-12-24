@@ -37,6 +37,23 @@
           <u-line :color="'rgba(255, 255, 255, 0.1)'" :margin="'16rpx 0'"></u-line>
 
           <u-cell
+            title="修改密码"
+            :isLink="true"
+            :border="false"
+            @click="showChangePassword"
+            :customStyle="{
+              background: 'transparent',
+              color: 'white'
+            }"
+          >
+            <template #icon>
+              <text style="font-size: 56rpx; margin-right: 32rpx;">🔒</text>
+            </template>
+          </u-cell>
+
+          <u-line :color="'rgba(255, 255, 255, 0.1)'" :margin="'16rpx 0'"></u-line>
+
+          <u-cell
             title="退出登录"
             :isLink="true"
             :border="false"
@@ -53,6 +70,59 @@
         </u-cell-group>
       </view>
     </view>
+
+    <!-- 修改密码弹窗 -->
+    <view v-if="showPasswordModal" class="password-modal-overlay" @click="resetPasswordForm">
+      <view class="password-modal-content" @click.stop>
+        <!-- 标题 -->
+        <view class="modal-title">修改密码</view>
+
+        <!-- 表单内容 -->
+        <view class="modal-form">
+          <view class="form-item">
+            <view class="form-label">旧密码</view>
+            <input
+              v-model="passwordForm.oldPassword"
+              type="password"
+              placeholder="请输入旧密码"
+              class="form-input"
+            />
+          </view>
+          <view class="form-item">
+            <view class="form-label">新密码</view>
+            <input
+              v-model="passwordForm.newPassword"
+              type="password"
+              placeholder="请输入新密码（至少6位）"
+              class="form-input"
+            />
+          </view>
+          <view class="form-item">
+            <view class="form-label">确认密码</view>
+            <input
+              v-model="passwordForm.confirmPassword"
+              type="password"
+              placeholder="请再次输入新密码"
+              class="form-input"
+            />
+          </view>
+
+          <!-- 错误提示 -->
+          <view v-if="errorMessage" class="error-message">{{ errorMessage }}</view>
+        </view>
+
+        <!-- 按钮区域 -->
+        <view class="modal-actions">
+          <button class="modal-btn cancel-btn" @click.stop="resetPasswordForm">取消</button>
+          <button class="modal-btn confirm-btn" @click.stop="handleChangePassword">确定</button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 自定义 Toast -->
+    <view v-if="toastVisible" class="custom-toast">
+      {{ toastMessage }}
+    </view>
   </view>
 </template>
 
@@ -60,11 +130,29 @@
 import { ref, computed, onMounted } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { getUserInfo as getStorageUserInfo, logout, isLogin } from '@/utils/auth'
-import { getUserInfo as fetchUserInfo, updateUserInfo } from '@/api/user'
+import { getUserInfo as fetchUserInfo, updateUserInfo, changePassword } from '@/api/user'
 import { setUserInfo } from '@/utils/auth'
 import type { User } from '@/types'
 
 const userInfo = ref<User | null>(null)
+const showPasswordModal = ref(false)
+const passwordForm = ref({
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
+const errorMessage = ref('')
+const toastVisible = ref(false)
+const toastMessage = ref('')
+
+// 自定义 toast 函数
+const showToast = (message: string, duration = 2000) => {
+  toastMessage.value = message
+  toastVisible.value = true
+  setTimeout(() => {
+    toastVisible.value = false
+  }, duration)
+}
 
 const avatarText = computed(() => {
   return userInfo.value?.nickname?.substring(0, 1) || '?'
@@ -125,6 +213,72 @@ const showEditNickname = () => {
   })
 }
 
+const showChangePassword = () => {
+  showPasswordModal.value = true
+}
+
+const resetPasswordForm = () => {
+  passwordForm.value = {
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  }
+  errorMessage.value = ''
+  showPasswordModal.value = false
+}
+
+const handleChangePassword = async () => {
+  const { oldPassword, newPassword, confirmPassword } = passwordForm.value
+
+  // 清空之前的错误信息
+  errorMessage.value = ''
+
+  console.log('handleChangePassword called', { oldPassword, newPassword, confirmPassword })
+
+  // 验证
+  if (!oldPassword || !newPassword || !confirmPassword) {
+    console.log('验证失败：请填写完整信息')
+    errorMessage.value = '请填写完整信息'
+    return
+  }
+
+  if (newPassword.length < 6) {
+    console.log('验证失败：新密码长度不能少于6位')
+    errorMessage.value = '新密码长度不能少于6位'
+    return
+  }
+
+  if (newPassword !== confirmPassword) {
+    console.log('验证失败：两次输入的新密码不一致')
+    errorMessage.value = '两次输入的新密码不一致'
+    return
+  }
+
+  try {
+    console.log('开始调用修改密码 API')
+    uni.showLoading({ title: '修改中...' })
+    await changePassword({
+      old_password: oldPassword,
+      new_password: newPassword
+    })
+
+    uni.hideLoading()
+    showToast('修改成功，请重新登录', 2000)
+
+    // 重置表单并关闭弹窗
+    resetPasswordForm()
+
+    // 2秒后退出登录
+    setTimeout(() => {
+      logout()
+    }, 2000)
+  } catch (error) {
+    console.error('修改密码失败', error)
+    uni.hideLoading()
+    errorMessage.value = '修改密码失败，请检查旧密码是否正确'
+  }
+}
+
 const handleLogout = () => {
   uni.showModal({
     title: '提示',
@@ -140,4 +294,138 @@ const handleLogout = () => {
 
 <style scoped>
 /* 使用全局样式 */
+
+/* 修改密码弹窗样式 */
+.password-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.password-modal-content {
+  width: 600rpx;
+  background: white;
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+
+.modal-title {
+  padding: 32rpx;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: bold;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-form {
+  padding: 32rpx;
+}
+
+.form-item {
+  margin-bottom: 32rpx;
+}
+
+.form-item:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  color: #666;
+  font-size: 28rpx;
+  margin-bottom: 16rpx;
+}
+
+.form-input {
+  width: 100%;
+  height: 80rpx;
+  padding: 0 24rpx;
+  background: #f5f5f5;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  border: none;
+}
+
+.error-message {
+  margin-top: 24rpx;
+  padding: 20rpx;
+  background: #fff3f3;
+  border: 1px solid #ffcdd2;
+  border-radius: 8rpx;
+  color: #d32f2f;
+  font-size: 26rpx;
+  text-align: center;
+  animation: shake 0.3s;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10rpx); }
+  75% { transform: translateX(10rpx); }
+}
+
+.modal-actions {
+  display: flex;
+  border-top: 1px solid #f0f0f0;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 32rpx;
+  text-align: center;
+  font-size: 28rpx;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-btn::after {
+  border: none;
+}
+
+.cancel-btn {
+  color: #666;
+  border-right: 1px solid #f0f0f0;
+}
+
+.confirm-btn {
+  color: #007aff;
+  font-weight: bold;
+}
+
+.modal-btn:active {
+  background: #f5f5f5;
+}
+
+/* 自定义 Toast 样式 */
+.custom-toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 24rpx 48rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  z-index: 10000;
+  animation: fadeInOut 2s ease-in-out;
+  max-width: 80%;
+  text-align: center;
+  word-break: break-word;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  10% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  90% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+}
 </style>
