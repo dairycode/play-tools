@@ -25,8 +25,7 @@
             :border="false"
             @click="showEditNickname"
             :customStyle="{
-              background: 'transparent',
-              color: 'white'
+              background: 'transparent'
             }"
           >
             <template #icon>
@@ -42,8 +41,7 @@
             :border="false"
             @click="showChangePassword"
             :customStyle="{
-              background: 'transparent',
-              color: 'white'
+              background: 'transparent'
             }"
           >
             <template #icon>
@@ -59,8 +57,7 @@
             :border="false"
             @click="handleLogout"
             :customStyle="{
-              background: 'transparent',
-              color: 'white'
+              background: 'transparent'
             }"
           >
             <template #icon>
@@ -294,6 +291,19 @@ const handleLogout = () => {
 
 <style scoped>
 /* 使用全局样式 */
+
+/* 覆盖 uView Cell 组件的默认样式 */
+:deep(.u-cell__title-text) {
+  color: white !important;
+}
+
+:deep(.u-cell__value) {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+:deep(.u-icon) {
+  color: white !important;
+}
 
 /* 修改密码弹窗样式 */
 .password-modal-overlay {
