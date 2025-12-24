@@ -1,62 +1,71 @@
 <template>
-  <view class="min-h-screen game-bg p-4 md-p-6">
-    <view class="w-full max-w-2xl mx-auto relative z-10 animate-fade-in">
+  <view class="game-bg" style="min-height: 100vh; padding: 32rpx;">
+    <view class="animate-fade-in" style="width: 100%; max-width: 1000rpx; margin: 0 auto; position: relative; z-index: 10;">
       <!-- Header -->
-      <view class="text-center mb-8">
-        <view class="text-4xl font-bold text-white text-glow mb-2">游戏结算</view>
-        <view class="text-sm text-white-70">根据记账记录自动计算</view>
+      <view style="text-align: center; margin-bottom: 64rpx;">
+        <view class="text-glow text-white" style="font-size: 72rpx; font-weight: bold; margin-bottom: 16rpx;">游戏结算</view>
+        <view class="text-white-70" style="font-size: 28rpx;">根据记账记录自动计算</view>
       </view>
 
       <!-- Settlements List -->
-      <view v-if="settlements.length > 0" class="space-y-4 mb-6">
+      <view v-if="settlements.length > 0" style="margin-bottom: 48rpx;">
         <view
           v-for="(item, index) in settlements"
           :key="index"
-          class="glass-card p-6"
+          class="glass-card"
+          style="padding: 48rpx; margin-bottom: 32rpx;"
         >
-          <view class="flex items-center justify-between">
+          <view style="display: flex; align-items: center; justify-content: space-between;">
             <!-- From Player -->
-            <view class="flex flex-col items-center flex-1">
-              <view class="w-20 h-20 rounded-full bg-gradient-to-br from-primary-from to-primary-to flex items-center justify-center mb-2">
-                <text class="text-2xl font-bold text-white">{{ item.fromNickname.substring(0, 1) }}</text>
+            <view style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+              <view class="btn-primary" style="width: 160rpx; height: 160rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 16rpx;">
+                <text style="font-size: 64rpx; font-weight: bold; color: white;">{{ item.fromNickname.substring(0, 1) }}</text>
               </view>
-              <view class="text-sm text-white text-center">{{ item.fromNickname }}</view>
+              <view class="text-white" style="font-size: 28rpx; text-align: center;">{{ item.fromNickname }}</view>
             </view>
 
             <!-- Arrow and Amount -->
-            <view class="flex flex-col items-center mx-6">
-              <view class="text-4xl text-success-from mb-2">→</view>
-              <view class="text-2xl font-bold text-danger-from">¥{{ item.amount }}</view>
+            <view style="display: flex; flex-direction: column; align-items: center; margin: 0 48rpx;">
+              <view class="text-success" style="font-size: 80rpx; margin-bottom: 16rpx;">→</view>
+              <view class="text-danger" style="font-size: 56rpx; font-weight: bold;">¥{{ item.amount }}</view>
             </view>
 
             <!-- To Player -->
-            <view class="flex flex-col items-center flex-1">
-              <view class="w-20 h-20 rounded-full bg-gradient-to-br from-primary-from to-primary-to flex items-center justify-center mb-2">
-                <text class="text-2xl font-bold text-white">{{ item.toNickname.substring(0, 1) }}</text>
+            <view style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+              <view class="btn-primary" style="width: 160rpx; height: 160rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 16rpx;">
+                <text style="font-size: 64rpx; font-weight: bold; color: white;">{{ item.toNickname.substring(0, 1) }}</text>
               </view>
-              <view class="text-sm text-white text-center">{{ item.toNickname }}</view>
+              <view class="text-white" style="font-size: 28rpx; text-align: center;">{{ item.toNickname }}</view>
             </view>
           </view>
         </view>
       </view>
 
       <!-- No Settlement -->
-      <view v-else class="glass-card p-16 text-center mb-6">
-        <text class="text-2xl text-white-50">无需结算</text>
+      <view v-else class="glass-card" style="padding: 128rpx; text-align: center; margin-bottom: 48rpx;">
+        <text class="text-white-50" style="font-size: 56rpx;">无需结算</text>
       </view>
 
       <!-- Summary -->
-      <view class="glass-card p-6 mb-6">
-        <view class="text-lg font-bold text-white mb-3">结算说明</view>
-        <view class="text-sm text-white-70 leading-relaxed">
+      <view class="glass-card" style="padding: 48rpx; margin-bottom: 48rpx;">
+        <view class="text-white" style="font-size: 36rpx; font-weight: bold; margin-bottom: 24rpx;">结算说明</view>
+        <view class="text-white-70" style="font-size: 28rpx; line-height: 1.6;">
           以上是最优结算方案，通过最少的转账次数完成所有账务结清。
         </view>
       </view>
 
       <!-- Action Button -->
-      <button class="w-full btn-primary text-base" @click="backToHome">
-        返回首页
-      </button>
+      <u-button
+        type="primary"
+        text="返回首页"
+        @click="backToHome"
+        :customStyle="{
+          width: '100%',
+          fontSize: '32rpx',
+          fontWeight: 'bold'
+        }"
+        :custom-class="'btn-primary'"
+      ></u-button>
     </view>
   </view>
 </template>
@@ -104,7 +113,5 @@ const backToHome = () => {
 </script>
 
 <style scoped>
-button::after {
-  border: none;
-}
+/* 使用全局样式 */
 </style>

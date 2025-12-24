@@ -1,47 +1,48 @@
 <template>
-  <view class="min-h-screen game-bg p-4 md-p-6">
-    <view class="w-full max-w-4xl mx-auto relative z-10">
+  <view class="game-bg" style="min-height: 100vh; padding: 32rpx;">
+    <view style="width: 100%; max-width: 1200rpx; margin: 0 auto; position: relative; z-index: 10;">
       <!-- Header -->
-      <view class="flex items-center justify-between mb-6 animate-fade-in">
-        <view class="flex-1">
-          <view class="text-2xl font-bold text-white text-glow">{{ roomDetail?.name }}</view>
-          <view class="text-sm text-white-80 mt-1">ID: {{ roomId }}</view>
+      <view class="animate-fade-in" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 48rpx;">
+        <view style="flex: 1;">
+          <view class="text-glow text-white" style="font-size: 48rpx; font-weight: bold;">{{ roomDetail?.name }}</view>
+          <view class="text-white-80" style="font-size: 28rpx; margin-top: 8rpx;">ID: {{ roomId }}</view>
         </view>
-        <button
+        <u-button
           v-if="roomDetail?.status === 'waiting'"
-          class="btn-secondary text-sm"
+          text="邀请好友"
           @click="handleShare"
-        >
-          邀请好友
-        </button>
-        <button
+          :customStyle="{ fontSize: '28rpx' }"
+          :custom-class="'btn-secondary'"
+        ></u-button>
+        <u-button
           v-if="roomDetail?.isOwner && roomDetail?.status === 'playing'"
-          class="btn-danger text-sm"
+          text="结束游戏"
           @click="handleFinish"
-        >
-          结束游戏
-        </button>
+          :customStyle="{ fontSize: '28rpx' }"
+          :custom-class="'btn-danger'"
+        ></u-button>
       </view>
 
       <!-- Waiting Status -->
-      <view v-if="roomDetail?.status === 'waiting'" class="animate-fade-in space-y-4">
-        <view class="text-center text-lg font-semibold text-white mb-4">
+      <view v-if="roomDetail?.status === 'waiting'" class="animate-fade-in">
+        <view class="text-white" style="text-align: center; font-size: 36rpx; font-weight: 600; margin-bottom: 32rpx;">
           房间成员 ({{ roomDetail?.members?.length || 0 }}/{{ roomDetail?.maxPlayers || 0 }}人)
         </view>
 
         <!-- Members Grid -->
-        <view class="grid grid-cols-2 md-grid-cols-3 gap-3">
+        <view style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24rpx; margin-bottom: 32rpx;">
           <view
             v-for="member in roomDetail?.members"
             :key="member.userId"
-            class="glass-card p-4"
+            class="glass-card"
+            style="padding: 32rpx;"
           >
-            <view class="flex flex-col items-center">
-              <view class="w-16 h-16 rounded-full bg-gradient-to-br from-primary-from to-primary-to flex items-center justify-center text-white font-bold text-xl mb-2">
+            <view style="display: flex; flex-direction: column; align-items: center;">
+              <view class="btn-primary" style="width: 128rpx; height: 128rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 56rpx; font-weight: bold; color: white; margin-bottom: 16rpx;">
                 {{ member.nickname.substring(0, 1) }}
               </view>
-              <view class="text-white text-sm mb-1">{{ member.nickname }}</view>
-              <view :class="['text-xs', member.isReady ? 'text-success-from font-bold' : 'text-white-50']">
+              <view class="text-white" style="font-size: 28rpx; margin-bottom: 8rpx;">{{ member.nickname }}</view>
+              <view :style="{ fontSize: '24rpx', color: member.isReady ? '#66bb6a' : 'rgba(255, 255, 255, 0.5)', fontWeight: member.isReady ? 'bold' : 'normal' }">
                 {{ member.isReady ? '已准备' : '未准备' }}
               </view>
             </view>
@@ -49,47 +50,48 @@
         </view>
 
         <!-- Action Buttons -->
-        <view class="glass-card p-6 mt-4">
-          <button
+        <view class="glass-card" style="padding: 48rpx; margin-top: 32rpx;">
+          <u-button
             v-if="!roomDetail?.isOwner"
-            :class="['w-full', currentUserReady ? 'btn-secondary' : 'btn-success']"
+            :text="currentUserReady ? '取消准备' : '准备'"
             @click="handleToggleReady"
-          >
-            {{ currentUserReady ? '取消准备' : '准备' }}
-          </button>
-          <button
+            :customStyle="{ width: '100%', fontSize: '32rpx', fontWeight: 'bold' }"
+            :custom-class="currentUserReady ? 'btn-secondary' : 'btn-success'"
+          ></u-button>
+          <u-button
             v-if="roomDetail?.isOwner"
-            class="w-full btn-success"
+            :text="startButtonText"
             :disabled="!allReady"
             @click="handleStart"
-          >
-            {{ startButtonText }}
-          </button>
+            :customStyle="{ width: '100%', fontSize: '32rpx', fontWeight: 'bold' }"
+            :custom-class="'btn-success'"
+          ></u-button>
         </view>
       </view>
 
       <!-- Playing Status -->
-      <view v-if="roomDetail?.status === 'playing'" class="animate-fade-in space-y-4">
+      <view v-if="roomDetail?.status === 'playing'" class="animate-fade-in">
         <!-- Members Section -->
-        <view class="glass-card p-6">
-          <view class="text-lg font-semibold text-white mb-4">
+        <view class="glass-card" style="padding: 48rpx; margin-bottom: 32rpx;">
+          <view class="text-white" style="font-size: 36rpx; font-weight: 600; margin-bottom: 32rpx;">
             房间成员 ({{ roomDetail?.members?.length || 0 }}人)
           </view>
-          <view class="grid grid-cols-2 md-grid-cols-3 gap-3">
+          <view style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24rpx;">
             <view
               v-for="member in roomDetail?.members"
               :key="member.userId"
-              class="bg-white-5 backdrop-blur-md rounded-xl border-2 border-white-10 p-4"
+              style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border-radius: 12rpx; border: 2rpx solid rgba(255, 255, 255, 0.1); padding: 32rpx;"
             >
-              <view class="flex flex-col items-center">
-                <view class="w-16 h-16 rounded-full bg-gradient-to-br from-primary-from to-primary-to flex items-center justify-center text-white font-bold text-xl mb-2">
+              <view style="display: flex; flex-direction: column; align-items: center;">
+                <view class="btn-primary" style="width: 128rpx; height: 128rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 56rpx; font-weight: bold; color: white; margin-bottom: 16rpx;">
                   {{ member.nickname.substring(0, 1) }}
                 </view>
-                <view class="text-white text-sm mb-1">{{ member.nickname }}</view>
-                <view :class="[
-                  'text-base font-bold',
-                  member.balance > 0 ? 'text-danger-from' : member.balance < 0 ? 'text-success-from' : 'text-white-50'
-                ]">
+                <view class="text-white" style="font-size: 28rpx; margin-bottom: 8rpx;">{{ member.nickname }}</view>
+                <view :style="{
+                  fontSize: '32rpx',
+                  fontWeight: 'bold',
+                  color: member.balance > 0 ? '#f44336' : member.balance < 0 ? '#66bb6a' : 'rgba(255, 255, 255, 0.5)'
+                }">
                   {{ member.balance >= 0 ? '+' : '' }}{{ member.balance }}
                 </view>
               </view>
@@ -98,61 +100,71 @@
         </view>
 
         <!-- Transfer Section -->
-        <view class="glass-card p-6">
-          <view class="text-lg font-semibold text-white mb-4">我要转账</view>
+        <view class="glass-card" style="padding: 48rpx; margin-bottom: 32rpx;">
+          <view class="text-white" style="font-size: 36rpx; font-weight: 600; margin-bottom: 32rpx;">我要转账</view>
 
           <!-- Amount Input -->
-          <input
-            style="width: calc(100% - 2.25rem);"
-            class="px-4 py-3 bg-white-10 rounded-xl text-white text-center text-xl font-bold mb-4 border-2 border-white-20"
+          <u-input
             v-model.number="transferAmount"
             type="digit"
             placeholder="输入金额"
-          />
+            :customStyle="{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2rpx solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '12rpx',
+              color: 'white',
+              textAlign: 'center',
+              fontSize: '48rpx',
+              fontWeight: 'bold',
+              padding: '24rpx',
+              marginBottom: '32rpx'
+            }"
+            placeholderStyle="color: rgba(255, 255, 255, 0.5)"
+          ></u-input>
 
           <!-- Quick Amounts -->
-          <view class="grid grid-cols-3 gap-2 mb-4">
+          <view style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16rpx; margin-bottom: 32rpx;">
             <view
               v-for="amount in quickAmounts"
               :key="amount"
-              class="h-12 bg-white-10 rounded-xl flex items-center justify-center text-white-70 text-sm cursor-pointer hover-bg-white-15 transition-all"
               @click="setAmount(amount)"
+              style="height: 96rpx; background: rgba(255, 255, 255, 0.1); border-radius: 12rpx; display: flex; align-items: center; justify-content: center; color: rgba(255, 255, 255, 0.7); font-size: 28rpx; cursor: pointer; transition: all 0.3s;"
             >
               {{ amount }}
             </view>
           </view>
 
           <!-- Target Members -->
-          <view class="grid grid-cols-4 gap-3">
+          <view style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24rpx;">
             <view
               v-for="member in otherMembers"
               :key="member.userId"
-              class="flex flex-col items-center cursor-pointer"
               @click="handleTransfer(member)"
+              style="display: flex; flex-direction: column; align-items: center; cursor: pointer;"
             >
-              <view class="w-16 h-16 rounded-full bg-gradient-to-br from-primary-from to-primary-to flex items-center justify-center text-white font-bold text-lg mb-2">
+              <view class="btn-primary" style="width: 128rpx; height: 128rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48rpx; font-weight: bold; color: white; margin-bottom: 16rpx;">
                 {{ member.nickname.substring(0, 1) }}
               </view>
-              <view class="text-white-80 text-xs text-center">{{ member.nickname }}</view>
+              <view class="text-white-80" style="font-size: 24rpx; text-align: center;">{{ member.nickname }}</view>
             </view>
           </view>
         </view>
 
         <!-- Transaction History -->
-        <view v-if="roomDetail?.transactions && roomDetail.transactions.length > 0" class="glass-card p-6">
-          <view class="text-lg font-semibold text-white mb-4">转账记录</view>
-          <view class="space-y-2 max-h-96 overflow-y-auto">
+        <view v-if="roomDetail?.transactions && roomDetail.transactions.length > 0" class="glass-card" style="padding: 48rpx;">
+          <view class="text-white" style="font-size: 36rpx; font-weight: 600; margin-bottom: 32rpx;">转账记录</view>
+          <view style="max-height: 768rpx; overflow-y: auto;">
             <view
               v-for="tx in roomDetail.transactions"
               :key="tx.id"
-              class="flex items-center justify-between p-3 bg-white-5 rounded-xl"
+              style="display: flex; align-items: center; justify-content: space-between; padding: 24rpx; background: rgba(255, 255, 255, 0.05); border-radius: 12rpx; margin-bottom: 16rpx;"
             >
-              <view class="flex items-center gap-2 text-sm">
+              <view style="display: flex; align-items: center; gap: 16rpx; font-size: 28rpx;">
                 <text class="text-white-70">{{ tx.fromNickname }}</text>
-                <text class="text-success-from">→</text>
-                <text class="text-white font-bold">{{ tx.toNickname }}</text>
+                <text class="text-success">→</text>
+                <text class="text-white" style="font-weight: bold;">{{ tx.toNickname }}</text>
               </view>
-              <view class="text-danger-from font-bold">¥{{ tx.amount }}</view>
+              <view class="text-danger" style="font-weight: bold;">¥{{ tx.amount }}</view>
             </view>
           </view>
         </view>
@@ -188,9 +200,7 @@ const currentUserReady = computed(() => {
 
 const allReady = computed(() => {
   if (!roomDetail.value?.members) return false
-  // 检查房间是否人齐
   const isFull = roomDetail.value.members.length === roomDetail.value.maxPlayers
-  // 检查所有人是否都准备
   const allMembersReady = roomDetail.value.members.every(m => m.isReady)
   return isFull && allMembersReady
 })
@@ -217,9 +227,7 @@ const otherMembers = computed(() => {
 })
 
 onLoad(async (options: any) => {
-  // 检查登录状态
   if (!isLogin()) {
-    // 构建当前页面完整路径（包含所有参数）
     let currentPage = '/pages/poker/game-room'
     const params: string[] = []
 
@@ -234,7 +242,6 @@ onLoad(async (options: any) => {
       currentPage += '?' + params.join('&')
     }
 
-    // 跳转到登录页，携带返回路径
     uni.navigateTo({
       url: '/pages/login/login?redirect=' + encodeURIComponent(currentPage)
     })
@@ -244,7 +251,6 @@ onLoad(async (options: any) => {
   if (options.roomId) {
     roomId.value = options.roomId
 
-    // 如果是通过链接进入，先尝试加入房间
     if (options.join === '1') {
       try {
         await joinRoom({ roomId: roomId.value })
@@ -253,7 +259,6 @@ onLoad(async (options: any) => {
           icon: 'success'
         })
       } catch (error: any) {
-        // 如果已经加入过，忽略错误
         if (!error.msg?.includes('已经加入')) {
           uni.showToast({
             title: error.msg || '加入失败',
@@ -279,9 +284,8 @@ onUnmounted(() => {
 })
 
 const startAutoRefresh = () => {
-  // 每3秒刷新一次房间信息
   refreshTimer = setInterval(() => {
-    loadRoomInfo(true) // 静默刷新
+    loadRoomInfo(true)
   }, 3000) as unknown as number
 }
 
@@ -297,7 +301,6 @@ const loadRoomInfo = async (silent = false) => {
     const res = await getRoomInfo(roomId.value)
     roomDetail.value = res.data
 
-    // 如果房间已结束，跳转到结算页面
     if (res.data.status === 'finished') {
       stopAutoRefresh()
       uni.redirectTo({
@@ -312,21 +315,17 @@ const loadRoomInfo = async (silent = false) => {
 }
 
 const handleShare = () => {
-  // 构建完整的邀请链接
   let inviteUrl = ''
 
-  // H5环境下获取当前完整URL
   // @ts-ignore
   if (typeof window !== 'undefined') {
     const origin = window.location.origin
     const pathname = window.location.pathname
     inviteUrl = `${origin}${pathname}#/pages/poker/game-room?roomId=${roomId.value}&join=1`
   } else {
-    // 非H5环境（小程序等），使用相对路径
     inviteUrl = `/pages/poker/game-room?roomId=${roomId.value}&join=1`
   }
 
-  // 直接复制完整链接
   uni.setClipboardData({
     data: inviteUrl,
     success: () => {
@@ -356,12 +355,6 @@ const handleStart = async () => {
   } catch (error) {
     uni.hideLoading()
   }
-}
-
-const getBalanceClass = (balance: number) => {
-  if (balance > 0) return 'positive'
-  if (balance < 0) return 'negative'
-  return 'zero'
 }
 
 const setAmount = (amount: number) => {
@@ -423,26 +416,5 @@ const handleFinish = () => {
 </script>
 
 <style scoped>
-button::after {
-  border: none;
-}
-
-/* Custom scrollbar for transaction history */
-.max-h-96::-webkit-scrollbar {
-  width: 4px;
-}
-
-.max-h-96::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-}
-
-.max-h-96::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-}
-
-.max-h-96::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
+/* 使用全局样式 */
 </style>

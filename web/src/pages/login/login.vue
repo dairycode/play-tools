@@ -1,71 +1,98 @@
 <template>
-  <view class="min-h-screen game-bg flex items-center justify-center p-4 md-p-6">
+  <view class="game-bg">
     <view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
 
-    <view class="w-full max-w-md relative z-10 animate-fade-in">
+    <view style="padding: 32rpx; padding-top: 160rpx; position: relative; z-index: 10;">
       <!-- Logo/Icon -->
-      <view class="flex justify-center mb-4">
-        <view class="glass-card w-20 h-20 flex items-center justify-center">
-          <text class="text-5xl">🎮</text>
+      <view style="display: flex; justify-content: center; margin-bottom: 32rpx;">
+        <view class="glass-card" style="width: 160rpx; height: 160rpx; display: flex; align-items: center; justify-content: center;">
+          <text style="font-size: 80rpx;">🎮</text>
         </view>
       </view>
 
       <!-- Title -->
-      <view class="text-center mb-8">
-        <view class="text-3xl font-bold text-white text-glow mb-2">
+      <view style="text-align: center; margin-bottom: 64rpx;">
+        <view class="text-glow" style="font-size: 56rpx; font-weight: bold; color: white; margin-bottom: 16rpx;">
           {{ isLoginMode ? '欢迎登录' : '注册账号' }}
         </view>
-        <view class="text-sm text-white-70">游戏助手小程序</view>
+        <view class="text-white-70" style="font-size: 28rpx;">游戏助手小程序</view>
       </view>
 
       <!-- Form Card -->
-      <view class="glass-card p-6 md-p-8 space-y-4">
+      <view class="glass-card animate-fade-in" style="padding: 48rpx;">
         <!-- Username -->
-        <view class="input-wrapper">
-          <input
-            class="input-glass text-base"
+        <view style="margin-bottom: 32rpx;">
+          <u-input
             v-model="username"
             placeholder="请输入用户名"
-            maxlength="20"
-            :focus="false"
-            confirm-type="next"
-          />
+            :maxlength="20"
+            :customStyle="{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2rpx solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '12rpx',
+              color: 'white',
+              padding: '24rpx 32rpx',
+              fontSize: '32rpx'
+            }"
+            placeholderStyle="color: rgba(255, 255, 255, 0.5)"
+          ></u-input>
         </view>
 
         <!-- Password -->
-        <view class="input-wrapper">
-          <input
-            class="input-glass text-base"
+        <view style="margin-bottom: 32rpx;">
+          <u-input
             v-model="password"
             type="password"
             placeholder="请输入密码"
-            maxlength="20"
-            :focus="false"
             :password="true"
-            confirm-type="done"
-          />
+            :maxlength="20"
+            :customStyle="{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2rpx solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '12rpx',
+              color: 'white',
+              padding: '24rpx 32rpx',
+              fontSize: '32rpx'
+            }"
+            placeholderStyle="color: rgba(255, 255, 255, 0.5)"
+          ></u-input>
         </view>
 
         <!-- Nickname (Register mode only) -->
-        <view v-if="!isLoginMode" class="input-wrapper">
-          <input
-            class="input-glass text-base"
+        <view v-if="!isLoginMode" style="margin-bottom: 32rpx;">
+          <u-input
             v-model="nickname"
             placeholder="请输入昵称"
-            maxlength="20"
-            :focus="false"
-            confirm-type="done"
-          />
+            :maxlength="20"
+            :customStyle="{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2rpx solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '12rpx',
+              color: 'white',
+              padding: '24rpx 32rpx',
+              fontSize: '32rpx'
+            }"
+            placeholderStyle="color: rgba(255, 255, 255, 0.5)"
+          ></u-input>
         </view>
 
         <!-- Submit Button -->
-        <button class="w-full btn-primary text-base" @click="handleSubmit">
-          {{ isLoginMode ? '登录' : '注册' }}
-        </button>
+        <u-button
+          type="primary"
+          :text="isLoginMode ? '登录' : '注册'"
+          @click="handleSubmit"
+          :customStyle="{
+            width: '100%',
+            marginBottom: '32rpx',
+            fontSize: '32rpx',
+            fontWeight: 'bold'
+          }"
+          :custom-class="'btn-primary'"
+        ></u-button>
 
         <!-- Switch Mode -->
-        <view class="text-center text-sm text-white-90 mt-4 cursor-pointer" @click="switchMode">
-          {{ isLoginMode ? '没有账号？去注册' : '已有账号?去登录' }}
+        <view class="text-white-90" style="text-align: center; font-size: 28rpx; cursor: pointer;" @click="switchMode">
+          {{ isLoginMode ? '没有账号？去注册' : '已有账号？去登录' }}
         </view>
       </view>
     </view>
@@ -83,7 +110,7 @@ const isLoginMode = ref(true)
 const username = ref('')
 const password = ref('')
 const nickname = ref('')
-const redirectUrl = ref('/pages/index/index') // 默认跳转首页
+const redirectUrl = ref('/pages/index/index')
 
 // 获取状态栏高度
 uni.getSystemInfo({
@@ -145,15 +172,12 @@ const handleSubmit = async () => {
       })
 
       setTimeout(() => {
-        // 登录成功后跳转到之前的页面
         uni.switchTab({
           url: redirectUrl.value,
           fail: () => {
-            // 如果不是 tabBar 页面，使用 redirectTo
             uni.redirectTo({
               url: redirectUrl.value,
               fail: () => {
-                // 如果 redirectTo 也失败，使用 reLaunch
                 uni.reLaunch({
                   url: redirectUrl.value
                 })
@@ -176,7 +200,6 @@ const handleSubmit = async () => {
         icon: 'success'
       })
 
-      // 切换到登录模式
       setTimeout(() => {
         isLoginMode.value = true
         password.value = ''
@@ -196,15 +219,5 @@ const handleSubmit = async () => {
   left: 0;
   width: 100%;
   z-index: 999;
-}
-
-.input-wrapper {
-  position: relative;
-  z-index: 1;
-}
-
-/* Remove button default styles for uniapp */
-button::after {
-  border: none;
 }
 </style>

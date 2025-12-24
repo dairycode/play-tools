@@ -1,44 +1,54 @@
 <template>
-  <view class="min-h-screen game-bg">
+  <view class="game-bg" style="min-height: 100vh;">
     <!-- Header Profile Card -->
-    <view class="bg-gradient-to-br from-primary-from to-primary-to pt-16 pb-12 px-4 md-px-6">
-      <view class="w-full max-w-md mx-auto flex items-center">
-        <view class="w-24 h-24 rounded-full bg-white-30 backdrop-blur-md flex items-center justify-center mr-6">
-          <text class="text-5xl font-bold text-white">{{ avatarText }}</text>
+    <view class="btn-primary" style="padding: 128rpx 32rpx 96rpx;">
+      <view style="max-width: 700rpx; margin: 0 auto; display: flex; align-items: center;">
+        <view style="width: 192rpx; height: 192rpx; border-radius: 50%; background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; margin-right: 48rpx;">
+          <text style="font-size: 96rpx; font-weight: bold; color: white;">{{ avatarText }}</text>
         </view>
-        <view class="flex-1">
-          <view class="text-3xl font-bold text-white mb-2">{{ userInfo?.nickname || '未设置昵称' }}</view>
-          <view class="text-sm text-white-80">@{{ userInfo?.username }}</view>
+        <view style="flex: 1;">
+          <view class="text-white" style="font-size: 56rpx; font-weight: bold; margin-bottom: 16rpx;">
+            {{ userInfo?.nickname || '未设置昵称' }}
+          </view>
+          <view class="text-white-80" style="font-size: 28rpx;">@{{ userInfo?.username }}</view>
         </view>
       </view>
     </view>
 
     <!-- Menu List -->
-    <view class="w-full max-w-md mx-auto px-4 md-px-6 -mt-8 relative z-10">
-      <view class="glass-card p-2">
-        <view
-          class="flex items-center justify-between p-4 cursor-pointer transition-all duration-300 hover-bg-white-5 rounded-xl"
-          @click="showEditNickname"
-        >
-          <view class="flex items-center">
-            <text class="text-3xl mr-4">✏️</text>
-            <text class="text-base text-white">修改昵称</text>
-          </view>
-          <text class="text-4xl text-white-30">›</text>
-        </view>
+    <view style="max-width: 700rpx; margin: 0 auto; padding: 0 32rpx; margin-top: -64rpx; position: relative; z-index: 10;">
+      <view class="glass-card" style="padding: 16rpx;">
+        <u-cell-group :border="false" :customStyle="{ background: 'transparent' }">
+          <u-cell
+            title="修改昵称"
+            :isLink="true"
+            @click="showEditNickname"
+            :customStyle="{
+              background: 'transparent',
+              color: 'white'
+            }"
+          >
+            <template #icon>
+              <text style="font-size: 56rpx; margin-right: 32rpx;">✏️</text>
+            </template>
+          </u-cell>
 
-        <view class="h-px bg-white-10 my-1"></view>
+          <u-line :color="'rgba(255, 255, 255, 0.1)'" :margin="'16rpx 0'"></u-line>
 
-        <view
-          class="flex items-center justify-between p-4 cursor-pointer transition-all duration-300 hover-bg-white-5 rounded-xl"
-          @click="handleLogout"
-        >
-          <view class="flex items-center">
-            <text class="text-3xl mr-4">🚪</text>
-            <text class="text-base text-white">退出登录</text>
-          </view>
-          <text class="text-4xl text-white-30">›</text>
-        </view>
+          <u-cell
+            title="退出登录"
+            :isLink="true"
+            @click="handleLogout"
+            :customStyle="{
+              background: 'transparent',
+              color: 'white'
+            }"
+          >
+            <template #icon>
+              <text style="font-size: 56rpx; margin-right: 32rpx;">🚪</text>
+            </template>
+          </u-cell>
+        </u-cell-group>
       </view>
     </view>
   </view>
@@ -127,5 +137,5 @@ const handleLogout = () => {
 </script>
 
 <style scoped>
-/* No custom styles needed - all using Tailwind */
+/* 使用全局样式 */
 </style>

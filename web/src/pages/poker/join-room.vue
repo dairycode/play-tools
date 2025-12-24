@@ -1,29 +1,50 @@
 <template>
-  <view class="min-h-screen game-bg flex items-center justify-center p-4 md-p-6">
-    <view class="w-full max-w-md relative z-10 animate-fade-in">
+  <view class="game-bg" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 32rpx;">
+    <view class="animate-fade-in" style="width: 100%; max-width: 700rpx; position: relative; z-index: 10;">
       <!-- Header -->
-      <view class="mb-8">
-        <view class="text-3xl font-bold text-white text-glow mb-2">加入房间</view>
-        <view class="text-sm text-white-70">输入8位房间ID即可加入</view>
+      <view style="margin-bottom: 64rpx;">
+        <view class="text-glow text-white" style="font-size: 56rpx; font-weight: bold; margin-bottom: 16rpx;">加入房间</view>
+        <view class="text-white-70" style="font-size: 28rpx;">输入8位房间ID即可加入</view>
       </view>
 
       <!-- Form Card -->
-      <view class="glass-card p-6 md-p-8">
+      <view class="glass-card" style="padding: 48rpx;">
         <!-- Room ID Input -->
-        <view class="mb-6">
-          <view class="text-base font-semibold text-white mb-3">房间ID</view>
-          <input
-            class="w-full px-4 py-4 bg-white-10 rounded-xl text-white text-center text-2xl font-bold tracking-wider border-2 border-white-20 focus-border-primary-from-60 transition-all"
+        <view style="margin-bottom: 48rpx;">
+          <view class="text-white" style="font-size: 32rpx; font-weight: 600; margin-bottom: 24rpx;">房间ID</view>
+          <u-input
             v-model="roomId"
             placeholder="请输入8位ID"
-            maxlength="8"
-          />
+            :maxlength="8"
+            :customStyle="{
+              width: '100%',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2rpx solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '12rpx',
+              color: 'white',
+              textAlign: 'center',
+              fontSize: '48rpx',
+              fontWeight: 'bold',
+              letterSpacing: '0.1em',
+              padding: '32rpx'
+            }"
+            placeholderStyle="color: rgba(255, 255, 255, 0.5)"
+          ></u-input>
         </view>
 
         <!-- Join Button -->
-        <button class="w-full btn-success text-base mt-4" @click="handleJoin">
-          加入房间
-        </button>
+        <u-button
+          type="success"
+          text="加入房间"
+          @click="handleJoin"
+          :customStyle="{
+            width: '100%',
+            marginTop: '32rpx',
+            fontSize: '32rpx',
+            fontWeight: 'bold'
+          }"
+          :custom-class="'btn-success'"
+        ></u-button>
       </view>
     </view>
   </view>
@@ -90,7 +111,5 @@ const handleJoin = async () => {
 </script>
 
 <style scoped>
-button::after {
-  border: none;
-}
+/* 使用全局样式 */
 </style>

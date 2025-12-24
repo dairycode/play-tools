@@ -1,38 +1,56 @@
 <template>
-  <view class="min-h-screen game-bg flex items-center justify-center p-4 md-p-6">
-    <view class="w-full max-w-md relative z-10 animate-fade-in">
+  <view class="game-bg" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 32rpx;">
+    <view class="animate-fade-in" style="width: 100%; max-width: 700rpx; position: relative; z-index: 10;">
       <!-- Header -->
-      <view class="mb-8">
-        <view class="text-3xl font-bold text-white text-glow mb-2">创建房间</view>
-        <view class="text-sm text-white-70">输入房间名称，创建后分享给好友加入</view>
+      <view style="margin-bottom: 64rpx;">
+        <view class="text-glow text-white" style="font-size: 56rpx; font-weight: bold; margin-bottom: 16rpx;">创建房间</view>
+        <view class="text-white-70" style="font-size: 28rpx;">输入房间名称，创建后分享给好友加入</view>
       </view>
 
       <!-- Form Card -->
-      <view class="glass-card p-6 md-p-8">
+      <view class="glass-card" style="padding: 48rpx;">
         <!-- Room Name -->
-        <view class="mb-6">
-          <view class="text-base font-semibold text-white mb-3">房间名称</view>
-          <input
-            class="input-glass text-base"
+        <view style="margin-bottom: 48rpx;">
+          <view class="text-white" style="font-size: 32rpx; font-weight: 600; margin-bottom: 24rpx;">房间名称</view>
+          <u-input
             v-model="roomName"
             placeholder="例如：周末德州局"
-            maxlength="20"
-          />
+            :maxlength="20"
+            :customStyle="{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '2rpx solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '12rpx',
+              color: 'white',
+              padding: '24rpx 32rpx',
+              fontSize: '32rpx'
+            }"
+            placeholderStyle="color: rgba(255, 255, 255, 0.5)"
+          ></u-input>
         </view>
 
         <!-- Player Count -->
-        <view class="mb-6">
-          <view class="text-base font-semibold text-white mb-3">房间人数</view>
-          <view class="grid grid-cols-5 gap-2">
+        <view style="margin-bottom: 48rpx;">
+          <view class="text-white" style="font-size: 32rpx; font-weight: 600; margin-bottom: 24rpx;">房间人数</view>
+          <view style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16rpx;">
             <view
               v-for="count in [2, 3, 4, 5, 6, 7, 8, 9, 10]"
               :key="count"
-              :class="[
-                'h-14 rounded-xl flex items-center justify-center text-sm cursor-pointer transition-all duration-300',
-                maxPlayers === count
-                  ? 'bg-gradient-to-br from-primary-from to-primary-to text-white font-bold shadow-glow-blue'
-                  : 'bg-white-10 text-white-60 hover-bg-white-15'
-              ]"
+              :style="{
+                height: '112rpx',
+                borderRadius: '12rpx',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '28rpx',
+                cursor: 'pointer',
+                transition: 'all 0.3s',
+                background: maxPlayers === count
+                  ? 'linear-gradient(135deg, #4fc3f7 0%, #2196f3 100%)'
+                  : 'rgba(255, 255, 255, 0.1)',
+                color: maxPlayers === count ? 'white' : 'rgba(255, 255, 255, 0.6)',
+                fontWeight: maxPlayers === count ? 'bold' : 'normal',
+                boxShadow: maxPlayers === count ? '0 8rpx 24rpx rgba(33, 150, 243, 0.3)' : 'none'
+              }"
               @click="maxPlayers = count"
             >
               {{ count }}人
@@ -41,9 +59,18 @@
         </view>
 
         <!-- Create Button -->
-        <button class="w-full btn-primary text-base mt-4" @click="handleCreate">
-          创建房间
-        </button>
+        <u-button
+          type="primary"
+          text="创建房间"
+          @click="handleCreate"
+          :customStyle="{
+            width: '100%',
+            marginTop: '32rpx',
+            fontSize: '32rpx',
+            fontWeight: 'bold'
+          }"
+          :custom-class="'btn-primary'"
+        ></u-button>
       </view>
     </view>
   </view>
@@ -104,7 +131,5 @@ const handleCreate = async () => {
 </script>
 
 <style scoped>
-button::after {
-  border: none;
-}
+/* 使用全局样式 */
 </style>

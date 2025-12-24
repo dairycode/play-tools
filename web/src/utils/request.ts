@@ -4,11 +4,14 @@ const getBaseUrl = () => {
   // @ts-ignore
   if (typeof window !== 'undefined' && window.location) {
     const hostname = window.location.hostname
+    const baseUrl = `http://${hostname}:8081/api`
+    console.log('API Base URL:', baseUrl)
     // 如果是局域网IP或localhost，使用相同的host
-    return `http://${hostname}:8081/api`
+    return baseUrl
   }
   // 默认使用localhost（用于非H5环境）
-  return 'http://192.168.0.102:8081/api'
+  console.log('API Base URL: http://localhost:8081/api (default)')
+  return 'http://localhost:8081/api'
 }
 
 const BASE_URL = getBaseUrl()
