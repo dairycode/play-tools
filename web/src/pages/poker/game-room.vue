@@ -5,7 +5,7 @@
       <view class="animate-fade-in" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 48rpx;">
         <view style="flex: 1;">
           <view class="text-glow text-white" style="font-size: 48rpx; font-weight: bold;">{{ roomDetail?.name }}</view>
-          <view class="text-white-80" style="font-size: 28rpx; margin-top: 8rpx;">ID: {{ roomId }}</view>
+          <view class="text-white" style="font-size: 28rpx; margin-top: 8rpx;">ID: {{ roomId }}</view>
         </view>
         <u-button
           v-if="roomDetail?.status === 'waiting'"

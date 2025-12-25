@@ -1,5 +1,5 @@
 <template>
-  <view class="game-bg" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 32rpx;">
+  <view class="game-bg" style="min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 32rpx; padding-top: 120rpx;">
     <view class="animate-fade-in" style="width: 100%; max-width: 700rpx; position: relative; z-index: 10;">
       <!-- Header -->
       <view style="margin-bottom: 64rpx;">
