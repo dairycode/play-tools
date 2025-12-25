@@ -68,6 +68,36 @@
       </view>
     </view>
 
+    <!-- 修改昵称弹窗 -->
+    <view v-if="showNicknameModal" class="password-modal-overlay" @click="resetNicknameForm">
+      <view class="password-modal-content" @click.stop>
+        <!-- 标题 -->
+        <view class="modal-title">修改昵称</view>
+
+        <!-- 表单内容 -->
+        <view class="modal-form">
+          <view class="form-item">
+            <view class="form-label">新昵称</view>
+            <input
+              v-model="nicknameForm.nickname"
+              type="text"
+              placeholder="请输入新昵称"
+              class="form-input"
+            />
+          </view>
+
+          <!-- 错误提示 -->
+          <view v-if="nicknameError" class="error-message">{{ nicknameError }}</view>
+        </view>
+
+        <!-- 按钮区域 -->
+        <view class="modal-actions">
+          <button class="modal-btn cancel-btn" @click.stop="resetNicknameForm">取消</button>
+          <button class="modal-btn confirm-btn" @click.stop="handleUpdateNickname">确定</button>
+        </view>
+      </view>
+    </view>
+
     <!-- 修改密码弹窗 -->
     <view v-if="showPasswordModal" class="password-modal-overlay" @click="resetPasswordForm">
       <view class="password-modal-content" @click.stop>
@@ -116,6 +146,27 @@
       </view>
     </view>
 
+    <!-- 退出登录弹窗 -->
+    <view v-if="showLogoutModal" class="password-modal-overlay" @click="showLogoutModal = false">
+      <view class="password-modal-content" @click.stop>
+        <!-- 标题 -->
+        <view class="modal-title">退出登录</view>
+
+        <!-- 表单内容 -->
+        <view class="modal-form">
+          <view style="text-align: center; color: #666; font-size: 28rpx;">
+            确定要退出登录吗？
+          </view>
+        </view>
+
+        <!-- 按钮区域 -->
+        <view class="modal-actions">
+          <button class="modal-btn cancel-btn" @click.stop="showLogoutModal = false">取消</button>
+          <button class="modal-btn confirm-btn" @click.stop="confirmLogout">确定</button>
+        </view>
+      </view>
+    </view>
+
     <!-- 自定义 Toast -->
     <view v-if="toastVisible" class="custom-toast">
       {{ toastMessage }}
@@ -132,12 +183,18 @@ import { setUserInfo } from '@/utils/auth'
 import type { User } from '@/types'
 
 const userInfo = ref<User | null>(null)
+const showNicknameModal = ref(false)
 const showPasswordModal = ref(false)
+const showLogoutModal = ref(false)
+const nicknameForm = ref({
+  nickname: ''
+})
 const passwordForm = ref({
   oldPassword: '',
   newPassword: '',
   confirmPassword: ''
 })
+const nicknameError = ref('')
 const errorMessage = ref('')
 const toastVisible = ref(false)
 const toastMessage = ref('')
@@ -180,34 +237,52 @@ onMounted(async () => {
 })
 
 const showEditNickname = () => {
-  uni.showModal({
-    title: '修改昵称',
-    editable: true,
-    placeholderText: '请输入新昵称',
-    content: userInfo.value?.nickname || '',
-    success: async (res) => {
-      if (res.confirm && res.content) {
-        try {
-          uni.showLoading({ title: '修改中...' })
-          await updateUserInfo({ nickname: res.content })
+  nicknameForm.value.nickname = userInfo.value?.nickname || ''
+  showNicknameModal.value = true
+}
 
-          // 更新本地信息
-          if (userInfo.value) {
-            userInfo.value.nickname = res.content
-            setUserInfo(userInfo.value)
-          }
+const resetNicknameForm = () => {
+  nicknameForm.value.nickname = ''
+  nicknameError.value = ''
+  showNicknameModal.value = false
+}
 
-          uni.hideLoading()
-          uni.showToast({
-            title: '修改成功',
-            icon: 'success'
-          })
-        } catch (error) {
-          uni.hideLoading()
-        }
-      }
+const handleUpdateNickname = async () => {
+  const nickname = nicknameForm.value.nickname.trim()
+
+  // 清空之前的错误信息
+  nicknameError.value = ''
+
+  // 验证
+  if (!nickname) {
+    nicknameError.value = '请输入新昵称'
+    return
+  }
+
+  if (nickname.length > 20) {
+    nicknameError.value = '昵称长度不能超过20个字符'
+    return
+  }
+
+  try {
+    uni.showLoading({ title: '修改中...' })
+    await updateUserInfo({ nickname })
+
+    // 更新本地信息
+    if (userInfo.value) {
+      userInfo.value.nickname = nickname
+      setUserInfo(userInfo.value)
     }
-  })
+
+    uni.hideLoading()
+    showToast('修改成功')
+
+    // 重置表单并关闭弹窗
+    resetNicknameForm()
+  } catch (error) {
+    uni.hideLoading()
+    nicknameError.value = '修改失败，请稍后重试'
+  }
 }
 
 const showChangePassword = () => {
@@ -277,15 +352,12 @@ const handleChangePassword = async () => {
 }
 
 const handleLogout = () => {
-  uni.showModal({
-    title: '提示',
-    content: '确定要退出登录吗？',
-    success: (res) => {
-      if (res.confirm) {
-        logout()
-      }
-    }
-  })
+  showLogoutModal.value = true
+}
+
+const confirmLogout = () => {
+  showLogoutModal.value = false
+  logout()
 }
 </script>
 
