@@ -26,7 +26,7 @@ if [ -f "$SCRIPT_DIR/logs/backend.pid" ]; then
     rm "$SCRIPT_DIR/logs/backend.pid"
 else
     # 尝试通过端口查找并关闭
-    BACKEND_PID=$(lsof -ti :8081)
+    BACKEND_PID=$(lsof -ti :8080)
     if [ -n "$BACKEND_PID" ]; then
         kill $BACKEND_PID
         echo -e "${GREEN}✓ 后端服务已停止 (PID: $BACKEND_PID)${NC}"
@@ -48,7 +48,7 @@ if [ -f "$SCRIPT_DIR/logs/frontend.pid" ]; then
     rm "$SCRIPT_DIR/logs/frontend.pid"
 else
     # 尝试通过端口查找并关闭
-    FRONTEND_PID=$(lsof -ti :5173)
+    FRONTEND_PID=$(lsof -ti :80)
     if [ -n "$FRONTEND_PID" ]; then
         kill $FRONTEND_PID
         echo -e "${GREEN}✓ 前端服务已停止 (PID: $FRONTEND_PID)${NC}"

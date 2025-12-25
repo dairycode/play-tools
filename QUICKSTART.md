@@ -41,7 +41,7 @@ npm install
 npm run dev:h5
 ```
 
-前端服务将在浏览器中自动打开，通常是 `http://localhost:5173`
+前端服务将在浏览器中自动打开，通常是 `http://localhost:80`
 
 ### 3. 开始使用
 
