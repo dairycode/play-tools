@@ -3,40 +3,38 @@ package main
 import (
 	"log"
 	"play-tools/api"
+	"play-tools/config"
 	"play-tools/database"
 	"play-tools/middleware"
-	"strings"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// 初始化数据库
-	database.InitDB()
+	// 加载配置文件
+	if err := config.Init(); err != nil {
+		panic(err)
+	}
 
-	// 创建Gin引擎
+	// 初始化数据库
+	if err := database.Init(); err != nil {
+		panic(err)
+	}
+
+	// 创建 Gin 引擎
 	r := gin.Default()
 
-	// 配置CORS
-	config := cors.DefaultConfig()
-	config.AllowAllOrigins = false // 允许cookie时不能使用AllowAllOrigins
-	config.AllowOriginFunc = func(origin string) bool {
-		// fixme
-		if len(origin) > -1 {
-			return true
-		}
-		return strings.HasPrefix(origin, "http://localhost") ||
-			strings.HasPrefix(origin, "http://127.0.0.1") ||
-			strings.HasPrefix(origin, "http://192.168.") ||
-			strings.HasPrefix(origin, "http://10.")
-	}
-	config.AllowCredentials = true // 允许携带cookie
-	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
-	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
-	r.Use(cors.New(config))
+	// 配置 CORS
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = false // 允许 cookie 时不能使用 AllowAllOrigins
+	corsConfig.AllowOriginFunc = func(origin string) bool { return true }
+	corsConfig.AllowCredentials = true // 允许携带 cookie
+	corsConfig.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
+	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	r.Use(cors.New(corsConfig))
 
-	// API路由组
+	// API 路由组
 	apiGroup := r.Group("/api")
 	{
 		// 用户相关接口（无需认证）
@@ -72,9 +70,9 @@ func main() {
 	}
 
 	// 启动服务器
-	log.Println("Server is running on :8080")
-	log.Println("Access URLs:")
-	if err := r.Run("0.0.0.0:8080"); err != nil {
-		log.Fatal("Failed to start server:", err)
+	serverAddr := config.AppConfig.Server.Host + ":" + config.AppConfig.Server.Port
+	log.Printf("Server is running on %s\n", serverAddr)
+	if err := r.Run(serverAddr); err != nil {
+		panic(err)
 	}
 }

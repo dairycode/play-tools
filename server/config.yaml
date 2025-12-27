@@ -1,0 +1,14 @@
+# Play Tools 服务端配置文件
+
+# 数据库配置
+database:
+  user: root          # 数据库用户名
+  password: "123456"  # 数据库密码
+  host: localhost     # 数据库主机地址
+  port: "3306"        # 数据库端口
+  name: play_tools    # 数据库名称
+
+# 服务器配置
+server:
+  host: 0.0.0.0       # 服务器监听地址 (0.0.0.0 表示监听所有网络接口)
+  port: "8080"        # 服务器端口
