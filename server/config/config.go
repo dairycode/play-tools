@@ -62,8 +62,8 @@ func setDefaultValues(config *Config) {
 		log.Println("Database.User not set, using default: root")
 	}
 	if config.Database.Host == "" {
-		config.Database.Host = "localhost"
-		log.Println("Database.Host not set, using default: localhost")
+		config.Database.Host = "mysql"
+		log.Println("Database.Host not set, using default: mysql")
 	}
 	if config.Database.Port == "" {
 		config.Database.Port = "3306"

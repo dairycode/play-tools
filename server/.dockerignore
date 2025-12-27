@@ -1,0 +1,38 @@
+# Git
+.git
+.gitignore
+
+# Docker
+docker-compose.yml
+
+# 构建产物
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+play-tools
+
+# 测试
+*.test
+*.out
+
+# 依赖
+vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 临时文件
+*.log
+tmp/
+temp/
+
+# 环境文件
+.env
+.env.local
+.env.*.local
