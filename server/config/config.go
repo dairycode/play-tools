@@ -45,7 +45,42 @@ func Init() (err error) {
 		return
 	}
 
+	// 校验并填充默认值
+	setDefaultValues(config)
+
 	AppConfig = config
 	log.Println("Configuration loaded from config.yaml")
 	return
+}
+
+// setDefaultValues 校验配置并设置默认值
+func setDefaultValues(config *Config) {
+	// 数据库配置默认值
+	if config.Database.User == "" {
+		config.Database.User = "root"
+		config.Database.Password = "123456"
+		log.Println("Database.User not set, using default: root")
+	}
+	if config.Database.Host == "" {
+		config.Database.Host = "localhost"
+		log.Println("Database.Host not set, using default: localhost")
+	}
+	if config.Database.Port == "" {
+		config.Database.Port = "3306"
+		log.Println("Database.Port not set, using default: 3306")
+	}
+	if config.Database.Name == "" {
+		config.Database.Name = "play_tools"
+		log.Println("Database.Name not set, using default: play_tools")
+	}
+
+	// 服务器配置默认值
+	if config.Server.Port == "" {
+		config.Server.Port = "8080"
+		log.Println("Server.Port not set, using default: 8080")
+	}
+	if config.Server.Host == "" {
+		config.Server.Host = "0.0.0.0"
+		log.Println("Server.Host not set, using default: 0.0.0.0")
+	}
 }
