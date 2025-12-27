@@ -1,17 +1,18 @@
 // HTTP请求工具类
 // 根据当前访问地址自动确定后端地址
 const getBaseUrl = () => {
+  return 'https://dairycode.top:8080/api'
   // @ts-ignore
-  if (typeof window !== 'undefined' && window.location) {
-    const hostname = window.location.hostname
-    const baseUrl = `http://${hostname}:8080/api`
-    console.log('API Base URL:', baseUrl)
-    // 如果是局域网IP或localhost，使用相同的host
-    return baseUrl
-  }
-  // 默认使用localhost（用于非H5环境）
-  console.log('API Base URL: http://localhost:8080/api (default)')
-  return 'http://localhost:8080/api'
+  // if (typeof window !== 'undefined' && window.location) {
+  //   const hostname = window.location.hostname
+  //   const baseUrl = `http://${hostname}:8080/api`
+  //   console.log('API Base URL:', baseUrl)
+  //   // 如果是局域网IP或localhost，使用相同的host
+  //   return baseUrl
+  // }
+  // // 默认使用localhost（用于非H5环境）
+  // console.log('API Base URL: http://localhost:8080/api (default)')
+  // return 'http://localhost:8080/api'
 }
 
 const BASE_URL = getBaseUrl()

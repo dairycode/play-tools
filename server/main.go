@@ -22,17 +22,14 @@ func main() {
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = false // 允许cookie时不能使用AllowAllOrigins
 	config.AllowOriginFunc = func(origin string) bool {
-		// 允许localhost和127.0.0.1
-		if strings.HasPrefix(origin, "http://localhost") ||
-				strings.HasPrefix(origin, "http://127.0.0.1") {
-				return true
-			}
-			// 允许局域网IP（192.168.x.x 和 10.x.x.x）
-			if strings.HasPrefix(origin, "http://192.168.") ||
-				strings.HasPrefix(origin, "http://10.") {
-				return true
-			}
-			return false
+		// fixme
+		if len(origin) > -1 {
+			return true
+		}
+		return strings.HasPrefix(origin, "http://localhost") ||
+			strings.HasPrefix(origin, "http://127.0.0.1") ||
+			strings.HasPrefix(origin, "http://192.168.") ||
+			strings.HasPrefix(origin, "http://10.")
 	}
 	config.AllowCredentials = true // 允许携带cookie
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
@@ -77,8 +74,6 @@ func main() {
 	// 启动服务器
 	log.Println("Server is running on :8080")
 	log.Println("Access URLs:")
-	log.Println("  Local:   http://localhost:8080")
-	log.Println("  Network: http://192.168.0.102:8080")
 	if err := r.Run("0.0.0.0:8080"); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}
