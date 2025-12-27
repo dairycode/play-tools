@@ -28,13 +28,12 @@ type GameRoom struct {
 
 // RoomMember 房间成员模型
 type RoomMember struct {
-	ID       uint      `gorm:"primaryKey" json:"id"`
-	RoomID   string    `gorm:"type:varchar(8);index;not null" json:"roomId"`
-	UserID   uint      `gorm:"index;not null" json:"userId"`
-	Nickname string    `gorm:"type:varchar(50);not null" json:"nickname"` // 冗余存储，方便查询
-	IsReady  bool      `gorm:"default:false" json:"isReady"`              // 是否准备
-	JoinedAt time.Time `json:"joinedAt"`
-	User     User      `gorm:"foreignKey:UserID" json:"user,omitempty"`
+	ID       uint   `gorm:"primaryKey" json:"id"`
+	RoomID   string `gorm:"type:varchar(8);index;not null" json:"roomId"`
+	UserID   uint   `gorm:"index;not null" json:"userId"`
+	Nickname string `gorm:"type:varchar(50);not null" json:"nickname"` // 冗余存储，方便查询
+	IsReady  bool   `gorm:"default:false" json:"isReady"`              // 是否准备
+	User     User   `gorm:"foreignKey:UserID" json:"user,omitempty"`
 }
 
 // Transaction 交易记录模型
