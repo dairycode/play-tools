@@ -6,6 +6,7 @@ RUN apk add --no-cache git
 
 # 设置工作目录
 WORKDIR /app
+ENV GOPROXY=https://goproxy.cn,direct
 
 # 复制 go.mod 和 go.sum
 COPY go.mod go.sum ./
