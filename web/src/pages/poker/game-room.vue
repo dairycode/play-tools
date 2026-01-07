@@ -7,6 +7,19 @@
           <view class="text-glow text-white" style="font-size: 48rpx; font-weight: bold;">{{ roomDetail?.name }}</view>
           <view class="text-white" style="font-size: 28rpx; margin-top: 8rpx;">ID: {{ roomId }}</view>
         </view>
+        <!-- 微信小程序使用 button 的 open-type="share" -->
+        <!-- #ifdef MP-WEIXIN -->
+        <button
+          v-if="roomDetail?.status === 'waiting'"
+          class="share-button btn-secondary"
+          open-type="share"
+        >
+          邀请好友
+        </button>
+        <!-- #endif -->
+
+        <!-- H5 等其他平台使用原来的复制链接方式 -->
+        <!-- #ifndef MP-WEIXIN -->
         <u-button
           v-if="roomDetail?.status === 'waiting'"
           text="邀请好友"
@@ -19,6 +32,7 @@
           }"
           :custom-class="'btn-secondary'"
         ></u-button>
+        <!-- #endif -->
         <u-button
           v-if="roomDetail?.isOwner && roomDetail?.status === 'playing'"
           text="结束游戏"
@@ -185,7 +199,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onUnmounted } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
 import { getRoomInfo, addTransaction, finishGame, toggleReady, startGame, joinRoom } from '@/api/game'
 import { getUserInfo, isLogin } from '@/utils/auth'
 import type { RoomDetail, Member } from '@/types'
@@ -291,6 +305,15 @@ onLoad(async (options: any) => {
 
 onUnmounted(() => {
   stopAutoRefresh()
+})
+
+// 微信小程序分享配置
+onShareAppMessage(() => {
+  return {
+    title: `邀请你加入房间【${roomDetail.value?.name || '游戏房间'}】`,
+    path: `/pages/poker/game-room?roomId=${roomId.value}&join=1`,
+    imageUrl: '' // 可选：自定义分享图片
+  }
 })
 
 const startAutoRefresh = () => {
@@ -427,4 +450,22 @@ const handleFinish = () => {
 
 <style scoped>
 /* 使用全局样式 */
+
+/* 微信小程序分享按钮样式 */
+/* #ifdef MP-WEIXIN */
+.share-button {
+  font-size: 28rpx;
+  padding: 16rpx 32rpx;
+  height: auto;
+  width: auto;
+  border: none;
+  line-height: 1.5;
+  color: #ffffff;
+  border-radius: 8rpx;
+}
+
+.share-button::after {
+  border: none;
+}
+/* #endif */
 </style>
