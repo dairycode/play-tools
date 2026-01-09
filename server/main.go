@@ -59,6 +59,8 @@ func main() {
 			{
 				gameGroup.POST("/room/create", api.CreateRoom)
 				gameGroup.POST("/room/join", api.JoinRoom)
+				gameGroup.POST("/room/:roomId/leave", api.LeaveRoom)
+				gameGroup.GET("/room/current", api.GetCurrentRoom)
 				gameGroup.GET("/room/:roomId", api.GetRoomInfo)
 				gameGroup.GET("/room/:roomId/settlements", api.GetRoomSettlements)
 				gameGroup.POST("/room/:roomId/ready", api.ToggleReady)

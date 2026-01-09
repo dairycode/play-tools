@@ -60,6 +60,25 @@ type Settlement struct {
 	Amount       int    `json:"amount"`
 }
 
+// getUserCurrentRoom 获取用户当前所在的房间（未结束的房间）
+func getUserCurrentRoom(userID uint) *model.GameRoom {
+	// 查找用户最新加入的房间成员记录（按ID倒排）
+	var member model.RoomMember
+	if err := database.DB.Where("user_id = ?", userID).
+		Order("id DESC").
+		First(&member).Error; err != nil {
+		return nil
+	}
+
+	// 查找对应的房间，只返回未结束的房间
+	var room model.GameRoom
+	if err := database.DB.Where("id = ? AND status != ?", member.RoomID, "finished").First(&room).Error; err != nil {
+		return nil
+	}
+
+	return &room
+}
+
 // CreateRoom 创建房间
 func CreateRoom(c *gin.Context) {
 	userID, _ := c.Get("userId")
@@ -130,6 +149,15 @@ func JoinRoom(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 404,
 			"msg":  "房间不存在",
+		})
+		return
+	}
+
+	// 检查房间状态，只能加入等待中的房间
+	if room.Status != "waiting" {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "房间已开始或已结束，无法加入",
 		})
 		return
 	}
@@ -644,5 +672,100 @@ func StartGame(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"msg":  "游戏已开始",
+	})
+}
+
+// LeaveRoom 退出房间
+func LeaveRoom(c *gin.Context) {
+	userID, _ := c.Get("userId")
+	roomID := c.Param("roomId")
+
+	// 检查房间是否存在
+	var room model.GameRoom
+	if err := database.DB.First(&room, "id = ?", roomID).Error; err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 404,
+			"msg":  "房间不存在",
+		})
+		return
+	}
+
+	// 检查是否是房间成员
+	var member model.RoomMember
+	if err := database.DB.Where("room_id = ? AND user_id = ?", roomID, userID).First(&member).Error; err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 403,
+			"msg":  "你不是房间成员",
+		})
+		return
+	}
+
+	// 如果房间已经在游戏中或已结束，不允许退出
+	if room.Status != "waiting" {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "游戏进行中或已结束，无法退出房间",
+		})
+		return
+	}
+
+	// 删除成员记录
+	database.DB.Delete(&member)
+
+	// 如果是房主，需要处理房主转移或删除房间
+	if room.OwnerID == userID.(uint) {
+		// 获取剩余成员
+		var remainingMembers []model.RoomMember
+		database.DB.Where("room_id = ?", roomID).Find(&remainingMembers)
+
+		if len(remainingMembers) > 0 {
+			// 还有其他成员，转移房主权限给第一个成员
+			newOwner := remainingMembers[0]
+			database.DB.Model(&room).Update("owner_id", newOwner.UserID)
+
+			// 新房主自动设置为准备状态
+			database.DB.Model(&newOwner).Update("is_ready", true)
+
+			c.JSON(http.StatusOK, gin.H{
+				"code": 200,
+				"msg":  "已退出房间，房主已转移",
+			})
+		} else {
+			// 没有其他成员，删除房间及相关数据
+			database.DB.Where("room_id = ?", roomID).Delete(&model.Transaction{})
+			database.DB.Delete(&room)
+
+			c.JSON(http.StatusOK, gin.H{
+				"code": 200,
+				"msg":  "已退出房间，房间已关闭",
+			})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  "已退出房间",
+	})
+}
+
+// GetCurrentRoom 获取用户当前所在的房间
+func GetCurrentRoom(c *gin.Context) {
+	userID, _ := c.Get("userId")
+
+	currentRoom := getUserCurrentRoom(userID.(uint))
+	if currentRoom == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"msg":  "未加入任何房间",
+			"data": nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  "获取成功",
+		"data": currentRoom,
 	})
 }
