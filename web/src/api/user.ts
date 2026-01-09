@@ -45,3 +45,12 @@ export const changePassword = (data: { old_password: string; new_password: strin
     data
   })
 }
+
+// 微信小程序登录
+export const wechatLogin = (data: { code: string; nickname: string; avatar?: string }) => {
+  return request<{ token: string; user: User }>({
+    url: '/user/wechat-login',
+    method: 'POST',
+    data
+  })
+}

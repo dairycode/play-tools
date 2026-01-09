@@ -11,6 +11,7 @@ import (
 type Config struct {
 	Database DatabaseConfig `yaml:"database"`
 	Server   ServerConfig   `yaml:"server"`
+	Wechat   WechatConfig   `yaml:"wechat"`
 }
 
 // DatabaseConfig 数据库配置
@@ -26,6 +27,12 @@ type DatabaseConfig struct {
 type ServerConfig struct {
 	Port string `yaml:"port"`
 	Host string `yaml:"host"`
+}
+
+// WechatConfig 微信小程序配置
+type WechatConfig struct {
+	AppID  string `yaml:"appid"`  // 小程序 AppID
+	Secret string `yaml:"secret"` // 小程序 AppSecret
 }
 
 var AppConfig *Config

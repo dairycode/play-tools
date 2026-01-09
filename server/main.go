@@ -42,6 +42,7 @@ func main() {
 		{
 			userGroup.POST("/register", api.Register)
 			userGroup.POST("/login", api.Login)
+			userGroup.POST("/wechat-login", api.WechatLogin) // 微信小程序登录
 		}
 
 		// 需要认证的接口
