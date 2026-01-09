@@ -7,13 +7,11 @@ import (
 // User 用户模型
 type User struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
-	Username  string    `gorm:"type:varchar(20);uniqueIndex" json:"username"`             // 普通登录用户名，微信登录可为空
-	Password  string    `gorm:"type:varchar(100)" json:"-"`                               // 普通登录密码，微信登录可为空
-	WxOpenID  string    `gorm:"type:varchar(100);uniqueIndex" json:"wxOpenId,omitempty"`  // 微信小程序 OpenID
-	WxUnionID string    `gorm:"type:varchar(100);index" json:"wxUnionId,omitempty"`       // 微信 UnionID（可选）
-	Nickname  string    `gorm:"type:varchar(50);not null" json:"nickname"`                // 昵称，必填
-	Avatar    string    `gorm:"type:varchar(500)" json:"avatar"`                          // 头像URL
-	LoginType string    `gorm:"type:varchar(20);default:'normal'" json:"loginType"`       // 登录类型：normal, wechat
+	AccountID string    `gorm:"type:varchar(100);not null;uniqueIndex:idx_account_login" json:"accountId"` // 账号标识：普通登录存用户名，微信登录存OpenID
+	Password  string    `gorm:"type:varchar(100)" json:"-"`                                                 // 普通登录密码，微信登录可为空
+	LoginType string    `gorm:"type:varchar(20);not null;default:'normal';uniqueIndex:idx_account_login" json:"loginType"` // 登录类型：normal, wechat
+	Nickname  string    `gorm:"type:varchar(50);not null" json:"nickname"`                                  // 昵称，必填
+	Avatar    string    `gorm:"type:varchar(500)" json:"avatar"`                                            // 头像URL
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }

@@ -55,7 +55,7 @@ func Register(c *gin.Context) {
 
 	// 检查用户名是否已存在
 	var existUser model.User
-	if err := database.DB.Where("username = ?", req.Username).First(&existUser).Error; err == nil {
+	if err := database.DB.Where("account_id = ? AND login_type = ?", req.Username, "normal").First(&existUser).Error; err == nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"msg":  "用户名已存在",
@@ -75,9 +75,10 @@ func Register(c *gin.Context) {
 
 	// 创建用户
 	user := model.User{
-		Username: req.Username,
-		Password: hashedPassword,
-		Nickname: req.Nickname,
+		AccountID: req.Username,
+		Password:  hashedPassword,
+		Nickname:  req.Nickname,
+		LoginType: "normal",
 	}
 
 	if err := database.DB.Create(&user).Error; err != nil {
@@ -92,9 +93,9 @@ func Register(c *gin.Context) {
 		"code": 200,
 		"msg":  "注册成功",
 		"data": gin.H{
-			"id":       user.ID,
-			"username": user.Username,
-			"nickname": user.Nickname,
+			"id":        user.ID,
+			"accountId": user.AccountID,
+			"nickname":  user.Nickname,
 		},
 	})
 }
@@ -112,7 +113,7 @@ func Login(c *gin.Context) {
 
 	// 查找用户
 	var user model.User
-	if err := database.DB.Where("username = ?", req.Username).First(&user).Error; err != nil {
+	if err := database.DB.Where("account_id = ? AND login_type = ?", req.Username, "normal").First(&user).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"msg":  "用户名或密码错误",
@@ -130,7 +131,7 @@ func Login(c *gin.Context) {
 	}
 
 	// 生成Token
-	token, err := utils.GenerateToken(user.ID, user.Username)
+	token, err := utils.GenerateToken(user.ID, user.AccountID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"code": 500,
@@ -157,9 +158,10 @@ func Login(c *gin.Context) {
 			"token": token,
 			"user": gin.H{
 				"id":        user.ID,
-				"username":  user.Username,
+				"accountId": user.AccountID,
 				"nickname":  user.Nickname,
 				"avatar":    user.Avatar,
+				"loginType": user.LoginType,
 				"createdAt": user.CreatedAt,
 			},
 		},
@@ -184,9 +186,10 @@ func GetUserInfo(c *gin.Context) {
 		"msg":  "获取成功",
 		"data": gin.H{
 			"id":        user.ID,
-			"username":  user.Username,
+			"accountId": user.AccountID,
 			"nickname":  user.Nickname,
 			"avatar":    user.Avatar,
+			"loginType": user.LoginType,
 			"createdAt": user.CreatedAt,
 		},
 	})
@@ -316,13 +319,12 @@ func WechatLogin(c *gin.Context) {
 
 	// 查找是否已存在该 openid 的用户
 	var user model.User
-	result := database.DB.Where("wx_open_id = ?", session.OpenID).First(&user)
+	result := database.DB.Where("account_id = ? AND login_type = ?", session.OpenID, "wechat").First(&user)
 
 	if result.Error != nil {
 		// 用户不存在，创建新用户
 		user = model.User{
-			WxOpenID:  session.OpenID,
-			WxUnionID: session.UnionID,
+			AccountID: session.OpenID,
 			Nickname:  req.Nickname,
 			Avatar:    req.Avatar,
 			LoginType: "wechat",
@@ -351,7 +353,7 @@ func WechatLogin(c *gin.Context) {
 	}
 
 	// 生成 Token
-	token, err := utils.GenerateToken(user.ID, user.WxOpenID)
+	token, err := utils.GenerateToken(user.ID, user.AccountID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"code": 500,

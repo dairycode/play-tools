@@ -46,6 +46,7 @@ type RoomDetail struct {
 type MemberInfo struct {
 	UserID   uint   `json:"userId"`
 	Nickname string `json:"nickname"`
+	Avatar   string `json:"avatar"`
 	IsReady  bool   `json:"isReady"`
 	Balance  int    `json:"balance"` // 计算得出的余额
 }
@@ -212,9 +213,14 @@ func GetRoomInfo(c *gin.Context) {
 	// 构建成员信息列表
 	memberInfos := make([]MemberInfo, 0, len(members))
 	for _, member := range members {
+		// 获取用户头像信息
+		var user model.User
+		database.DB.Select("avatar").First(&user, member.UserID)
+
 		memberInfos = append(memberInfos, MemberInfo{
 			UserID:   member.UserID,
 			Nickname: member.Nickname,
+			Avatar:   user.Avatar,
 			IsReady:  member.IsReady,
 			Balance:  balanceMap[member.UserID],
 		})
