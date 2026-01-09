@@ -99,7 +99,8 @@ func CreateRoom(c *gin.Context) {
 		RoomID:   roomID,
 		UserID:   userID.(uint),
 		Nickname: user.Nickname,
-		IsReady:  true, // 房主自动准备
+		Avatar:   user.Avatar, // 冗余存储用户头像
+		IsReady:  true,        // 房主自动准备
 	}
 	database.DB.Create(&member)
 
@@ -163,7 +164,8 @@ func JoinRoom(c *gin.Context) {
 		RoomID:   req.RoomID,
 		UserID:   userID.(uint),
 		Nickname: user.Nickname,
-		IsReady:  false, // 新加入的成员需要准备
+		Avatar:   user.Avatar, // 冗余存储用户头像
+		IsReady:  false,       // 新加入的成员需要准备
 	}
 
 	if err := database.DB.Create(&member).Error; err != nil {
@@ -213,14 +215,10 @@ func GetRoomInfo(c *gin.Context) {
 	// 构建成员信息列表
 	memberInfos := make([]MemberInfo, 0, len(members))
 	for _, member := range members {
-		// 获取用户头像信息
-		var user model.User
-		database.DB.Select("avatar").First(&user, member.UserID)
-
 		memberInfos = append(memberInfos, MemberInfo{
 			UserID:   member.UserID,
 			Nickname: member.Nickname,
-			Avatar:   user.Avatar,
+			Avatar:   member.Avatar, // 使用冗余存储的头像，避免额外查询
 			IsReady:  member.IsReady,
 			Balance:  balanceMap[member.UserID],
 		})

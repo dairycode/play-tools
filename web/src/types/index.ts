@@ -6,6 +6,7 @@ export interface User {
   username: string
   nickname: string
   avatar?: string
+  loginType?: string  // 登录类型：normal, wechat
   createdAt: string
 }
 
@@ -13,6 +14,7 @@ export interface User {
 export interface Member {
   userId: number
   nickname: string
+  avatar?: string  // 用户头像
   isReady: boolean
   balance: number
 }

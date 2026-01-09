@@ -62,8 +62,14 @@
             style="padding: 32rpx;"
           >
             <view style="display: flex; flex-direction: column; align-items: center;">
-              <view class="btn-primary" style="width: 128rpx; height: 128rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 56rpx; font-weight: bold; color: white; margin-bottom: 16rpx;">
-                {{ member.nickname.substring(0, 1) }}
+              <view class="btn-primary" style="width: 128rpx; height: 128rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 56rpx; font-weight: bold; color: white; margin-bottom: 16rpx; overflow: hidden;">
+                <image
+                  v-if="member.avatar"
+                  :src="member.avatar"
+                  mode="aspectFill"
+                  style="width: 100%; height: 100%;"
+                />
+                <text v-else>{{ member.nickname.substring(0, 1) }}</text>
               </view>
               <view class="text-white" style="font-size: 28rpx; margin-bottom: 8rpx;">{{ member.nickname }}</view>
               <view :style="{ fontSize: '24rpx', color: member.isReady ? '#66bb6a' : 'rgba(255, 255, 255, 0.5)', fontWeight: member.isReady ? 'bold' : 'normal' }">
@@ -107,8 +113,14 @@
               style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border-radius: 12rpx; border: 2rpx solid rgba(255, 255, 255, 0.1); padding: 32rpx;"
             >
               <view style="display: flex; flex-direction: column; align-items: center;">
-                <view class="btn-primary" style="width: 128rpx; height: 128rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 56rpx; font-weight: bold; color: white; margin-bottom: 16rpx;">
-                  {{ member.nickname.substring(0, 1) }}
+                <view class="btn-primary" style="width: 128rpx; height: 128rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 56rpx; font-weight: bold; color: white; margin-bottom: 16rpx; overflow: hidden;">
+                  <image
+                    v-if="member.avatar"
+                    :src="member.avatar"
+                    mode="aspectFill"
+                    style="width: 100%; height: 100%;"
+                  />
+                  <text v-else>{{ member.nickname.substring(0, 1) }}</text>
                 </view>
                 <view class="text-white" style="font-size: 28rpx; margin-bottom: 8rpx;">{{ member.nickname }}</view>
                 <view :style="{
@@ -166,8 +178,14 @@
               @click="handleTransfer(member)"
               style="display: flex; flex-direction: column; align-items: center; cursor: pointer;"
             >
-              <view class="btn-primary" style="width: 128rpx; height: 128rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48rpx; font-weight: bold; color: white; margin-bottom: 16rpx;">
-                {{ member.nickname.substring(0, 1) }}
+              <view class="btn-primary" style="width: 128rpx; height: 128rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48rpx; font-weight: bold; color: white; margin-bottom: 16rpx; overflow: hidden;">
+                <image
+                  v-if="member.avatar"
+                  :src="member.avatar"
+                  mode="aspectFill"
+                  style="width: 100%; height: 100%;"
+                />
+                <text v-else>{{ member.nickname.substring(0, 1) }}</text>
               </view>
               <view class="text-white-80" style="font-size: 24rpx; text-align: center;">{{ member.nickname }}</view>
             </view>

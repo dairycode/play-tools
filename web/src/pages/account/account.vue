@@ -3,8 +3,14 @@
     <!-- Header Profile Card -->
     <view class="btn-primary" style="padding: 128rpx 32rpx 96rpx;">
       <view style="max-width: 700rpx; margin: 0 auto; display: flex; align-items: center;">
-        <view style="width: 192rpx; height: 192rpx; border-radius: 50%; background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; margin-right: 48rpx;">
-          <text style="font-size: 96rpx; font-weight: bold; color: white;">{{ avatarText }}</text>
+        <view style="width: 192rpx; height: 192rpx; border-radius: 50%; background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; margin-right: 48rpx; overflow: hidden;">
+          <image
+            v-if="userInfo?.avatar"
+            :src="userInfo.avatar"
+            mode="aspectFill"
+            style="width: 100%; height: 100%;"
+          />
+          <text v-else style="font-size: 96rpx; font-weight: bold; color: white;">{{ avatarText }}</text>
         </view>
         <view style="flex: 1;">
           <view class="text-white" style="font-size: 56rpx; font-weight: bold; margin-bottom: 16rpx;">
@@ -33,23 +39,26 @@
             </template>
           </u-cell>
 
-          <u-line :color="'rgba(255, 255, 255, 0.1)'" :margin="'16rpx 0'"></u-line>
+          <!-- 只有账号密码登录的用户才显示修改密码选项 -->
+          <template v-if="userInfo?.loginType === 'normal'">
+            <u-line :color="'rgba(255, 255, 255, 0.1)'" :margin="'16rpx 0'"></u-line>
 
-          <u-cell
-            title="修改密码"
-            :isLink="true"
-            :border="false"
-            @click="showChangePassword"
-            :customStyle="{
-              background: 'transparent'
-            }"
-          >
-            <template #icon>
-              <text style="font-size: 56rpx; margin-right: 32rpx;">🔒</text>
-            </template>
-          </u-cell>
+            <u-cell
+              title="修改密码"
+              :isLink="true"
+              :border="false"
+              @click="showChangePassword"
+              :customStyle="{
+                background: 'transparent'
+              }"
+            >
+              <template #icon>
+                <text style="font-size: 56rpx; margin-right: 32rpx;">🔒</text>
+              </template>
+            </u-cell>
 
-          <u-line :color="'rgba(255, 255, 255, 0.1)'" :margin="'16rpx 0'"></u-line>
+            <u-line :color="'rgba(255, 255, 255, 0.1)'" :margin="'16rpx 0'"></u-line>
+          </template>
 
           <u-cell
             title="退出登录"

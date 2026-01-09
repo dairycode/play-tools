@@ -33,6 +33,7 @@ type RoomMember struct {
 	RoomID   string `gorm:"type:varchar(8);index;not null" json:"roomId"`
 	UserID   uint   `gorm:"index;not null" json:"userId"`
 	Nickname string `gorm:"type:varchar(50);not null" json:"nickname"` // 冗余存储，方便查询
+	Avatar   string `gorm:"type:varchar(500)" json:"avatar"`           // 冗余存储用户头像
 	IsReady  bool   `gorm:"default:false" json:"isReady"`              // 是否准备
 	User     User   `gorm:"foreignKey:UserID" json:"user,omitempty"`
 }
