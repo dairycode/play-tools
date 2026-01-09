@@ -7,6 +7,33 @@
         <view class="text-white-70" style="font-size: 28rpx;">输入房间名称，创建后分享给好友加入</view>
       </view>
 
+      <!-- 返回房间提示 -->
+      <view v-if="currentRoom" class="glass-card animate-fade-in" style="padding: 32rpx; margin-bottom: 32rpx; background: rgba(255, 193, 7, 0.1); border: 2rpx solid rgba(255, 193, 7, 0.3);">
+        <view style="display: flex; align-items: center; justify-content: space-between;">
+          <view style="flex: 1;">
+            <view class="text-white" style="font-size: 32rpx; font-weight: bold; margin-bottom: 8rpx;">
+              你还在房间中
+            </view>
+            <view class="text-white-80" style="font-size: 26rpx;">
+              {{ currentRoom.name }} ({{ currentRoom.status === 'waiting' ? '等待中' : currentRoom.status === 'playing' ? '游戏中' : '已结束' }})
+            </view>
+          </view>
+          <u-button
+            text="返回房间"
+            @click="goToCurrentRoom"
+            :customStyle="{
+              fontSize: '28rpx',
+              padding: '16rpx 32rpx',
+              height: 'auto',
+              width: 'auto',
+              background: 'linear-gradient(135deg, #ffd54f 0%, #ffb300 100%)',
+              color: '#333',
+              fontWeight: 'bold'
+            }"
+          ></u-button>
+        </view>
+      </view>
+
       <!-- Form Card -->
       <view class="glass-card" style="padding: 48rpx;">
         <!-- Room Name -->
@@ -78,21 +105,50 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
-import { createRoom } from '@/api/game'
+import { onLoad, onShow } from '@dcloudio/uni-app'
+import { createRoom, getCurrentRoom } from '@/api/game'
 import { isLogin } from '@/utils/auth'
+import type { GameRoom } from '@/types'
 
 const roomName = ref('')
 const maxPlayers = ref(5) // 默认5人
+const currentRoom = ref<GameRoom | null>(null)
 
-onLoad(() => {
+const loadCurrentRoom = async () => {
+  try {
+    const res = await getCurrentRoom()
+    currentRoom.value = res.data
+  } catch (error) {
+    console.error('获取当前房间失败', error)
+    currentRoom.value = null
+  }
+}
+
+onLoad(async () => {
   // 检查登录状态
   if (!isLogin()) {
     uni.navigateTo({
       url: '/pages/login/login?redirect=' + encodeURIComponent('/pages/poker/create-room')
     })
+    return
   }
+
+  // 查询当前所在房间
+  await loadCurrentRoom()
 })
+
+// 页面显示时刷新房间信息
+onShow(async () => {
+  await loadCurrentRoom()
+})
+
+const goToCurrentRoom = () => {
+  if (currentRoom.value) {
+    uni.navigateTo({
+      url: `/pages/poker/game-room?roomId=${currentRoom.value.id}`
+    })
+  }
+}
 
 const handleCreate = async () => {
   if (!roomName.value.trim()) {
@@ -124,8 +180,18 @@ const handleCreate = async () => {
         url: `/pages/poker/game-room?roomId=${res.data.id}`
       })
     }, 500)
-  } catch (error) {
+  } catch (error: any) {
     uni.hideLoading()
+
+    // 如果创建失败（已在其他房间），刷新当前房间信息
+    await loadCurrentRoom()
+
+    // 显示错误提示
+    uni.showToast({
+      title: error.msg || '创建失败',
+      icon: 'none',
+      duration: 2000
+    })
   }
 }
 </script>

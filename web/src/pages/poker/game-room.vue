@@ -13,17 +13,38 @@
           v-if="roomDetail?.status === 'waiting'"
           class="share-button btn-secondary"
           open-type="share"
+          style="margin-right: 16rpx;"
         >
           邀请好友
+        </button>
+        <button
+          v-if="roomDetail?.status === 'waiting'"
+          class="share-button btn-secondary"
+          @click="handleLeaveRoom"
+        >
+          退出房间
         </button>
         <!-- #endif -->
 
         <!-- H5 等其他平台使用原来的复制链接方式 -->
         <!-- #ifndef MP-WEIXIN -->
         <u-button
-          v-if="roomDetail?.status === 'waiting'"
+          v-if="roomDetail?.status === 'waiting' && roomDetail?.isOwner"
           text="邀请好友"
           @click="handleShare"
+          :customStyle="{
+            fontSize: '28rpx',
+            padding: '16rpx 32rpx',
+            height: 'auto',
+            width: 'auto',
+            marginRight: '16rpx'
+          }"
+          :custom-class="'btn-secondary'"
+        ></u-button>
+        <u-button
+          v-if="roomDetail?.status === 'waiting'"
+          text="退出房间"
+          @click="handleLeaveRoom"
           :customStyle="{
             fontSize: '28rpx',
             padding: '16rpx 32rpx',
@@ -218,7 +239,7 @@
 <script setup lang="ts">
 import { ref, computed, onUnmounted } from 'vue'
 import { onLoad, onShareAppMessage } from '@dcloudio/uni-app'
-import { getRoomInfo, addTransaction, finishGame, toggleReady, startGame, joinRoom } from '@/api/game'
+import { getRoomInfo, addTransaction, finishGame, toggleReady, startGame, joinRoom, leaveRoom } from '@/api/game'
 import { getUserInfo, isLogin } from '@/utils/auth'
 import type { RoomDetail, Member } from '@/types'
 
@@ -457,6 +478,45 @@ const handleFinish = () => {
           uni.redirectTo({
             url: `/pages/poker/settlement?settlements=${encodeURIComponent(JSON.stringify(result.data))}`
           })
+        } catch (error) {
+          uni.hideLoading()
+        }
+      }
+    }
+  })
+}
+
+const handleLeaveRoom = () => {
+  uni.showModal({
+    title: '确认退出',
+    content: '确定要退出房间吗？',
+    success: async (res) => {
+      if (res.confirm) {
+        try {
+          uni.showLoading({ title: '退出中...' })
+
+          await leaveRoom(roomId.value)
+
+          uni.hideLoading()
+          uni.showToast({
+            title: '已退出房间',
+            icon: 'success'
+          })
+
+          // 返回上一页并刷新
+          setTimeout(() => {
+            // 获取页面栈
+            const pages = getCurrentPages()
+            const prevPage = pages[pages.length - 2]
+
+            // 如果上一页是创建房间页，通知它刷新
+            if (prevPage && prevPage.route === 'pages/poker/create-room') {
+              // @ts-ignore
+              prevPage.$vm.loadCurrentRoom && prevPage.$vm.loadCurrentRoom()
+            }
+
+            uni.navigateBack()
+          }, 1000)
         } catch (error) {
           uni.hideLoading()
         }

@@ -81,3 +81,19 @@ export const getRoomSettlements = (roomId: string) => {
     method: 'GET'
   })
 }
+
+// 退出房间
+export const leaveRoom = (roomId: string) => {
+  return request<void>({
+    url: `/game/room/${roomId}/leave`,
+    method: 'POST'
+  })
+}
+
+// 获取当前所在的房间
+export const getCurrentRoom = () => {
+  return request<GameRoom | null>({
+    url: '/game/room/current',
+    method: 'GET'
+  })
+}

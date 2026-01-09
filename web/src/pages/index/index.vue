@@ -45,13 +45,14 @@
 import { onLoad } from '@dcloudio/uni-app'
 import { isLogin } from '@/utils/auth'
 
-onLoad(() => {
+onLoad(async () => {
   // 检查登录状态
   if (!isLogin()) {
     // 跳转到登录页，并携带返回路径
     uni.navigateTo({
       url: '/pages/login/login?redirect=' + encodeURIComponent('/pages/index/index')
     })
+    return
   }
 })
 

@@ -92,6 +92,18 @@ func CreateRoom(c *gin.Context) {
 		return
 	}
 
+	// 检查用户是否已在其他房间中
+	if currentRoom := getUserCurrentRoom(userID.(uint)); currentRoom != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "你已在其他房间中，请先退出",
+			"data": gin.H{
+				"currentRoomId": currentRoom.ID,
+			},
+		})
+		return
+	}
+
 	// 创建房间
 	roomID := uuid.New().String()[:8] // 使用短ID方便分享
 	room := model.GameRoom{
