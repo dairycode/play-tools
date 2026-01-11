@@ -165,15 +165,18 @@ const onChooseAvatar = (e: any) => {
   uploadAvatar(tempPath)
 }
 
-// 选择头像（H5/其他平台）
+// 选择头像(H5/其他平台)
 const chooseImage = () => {
   uni.chooseImage({
     count: 1,
     sizeType: ['compressed'],
     sourceType: ['album', 'camera'],
     success: (res) => {
-      avatarUrl.value = res.tempFilePaths[0]
-      uploadAvatar(res.tempFilePaths[0])
+      const tempPath = res.tempFilePaths[0]
+      if (tempPath) {
+        avatarUrl.value = tempPath
+        uploadAvatar(tempPath)
+      }
     }
   })
 }

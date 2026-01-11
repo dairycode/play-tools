@@ -10,29 +10,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// RegisterRequest 注册请求
-type RegisterRequest struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
-	Nickname string `json:"nickname" binding:"required"`
-}
-
-// LoginRequest 登录请求
-type LoginRequest struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
-
 // UpdateUserRequest 更新用户信息请求
 type UpdateUserRequest struct {
 	Nickname string `json:"nickname"`
 	Avatar   string `json:"avatar"`
-}
-
-// ChangePasswordRequest 修改密码请求
-type ChangePasswordRequest struct {
-	OldPassword string `json:"old_password" binding:"required"`
-	NewPassword string `json:"new_password" binding:"required"`
 }
 
 // WechatLoginRequest 微信登录请求
@@ -42,138 +23,12 @@ type WechatLoginRequest struct {
 	Avatar   string `json:"avatar"`                      // 用户头像
 }
 
-// Register 用户注册
-func Register(c *gin.Context) {
-	var req RegisterRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code": 400,
-			"msg":  "参数错误",
-		})
-		return
-	}
-
-	// 检查用户名是否已存在
-	var existUser model.User
-	if err := database.DB.Where("account_id = ? AND login_type = ?", req.Username, "normal").First(&existUser).Error; err == nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "用户名已存在",
-		})
-		return
-	}
-
-	// 加密密码
-	hashedPassword, err := utils.HashPassword(req.Password)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"code": 500,
-			"msg":  "密码加密失败",
-		})
-		return
-	}
-
-	// 创建用户
-	user := model.User{
-		AccountID: req.Username,
-		Password:  hashedPassword,
-		Nickname:  req.Nickname,
-		LoginType: "normal",
-	}
-
-	if err := database.DB.Create(&user).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"code": 500,
-			"msg":  "创建用户失败",
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  "注册成功",
-		"data": gin.H{
-			"id":        user.ID,
-			"accountId": user.AccountID,
-			"nickname":  user.Nickname,
-		},
-	})
-}
-
-// Login 用户登录
-func Login(c *gin.Context) {
-	var req LoginRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code": 400,
-			"msg":  "参数错误",
-		})
-		return
-	}
-
-	// 查找用户
-	var user model.User
-	if err := database.DB.Where("account_id = ? AND login_type = ?", req.Username, "normal").First(&user).Error; err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "用户名或密码错误",
-		})
-		return
-	}
-
-	// 验证密码
-	if !utils.CheckPassword(req.Password, user.Password) {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "用户名或密码错误",
-		})
-		return
-	}
-
-	// 生成Token
-	token, err := utils.GenerateToken(user.ID, user.AccountID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"code": 500,
-			"msg":  "生成Token失败",
-		})
-		return
-	}
-
-	// 设置Cookie（7天有效期）
-	c.SetCookie(
-		"token",                  // cookie名称
-		token,                    // cookie值
-		7*24*60*60,               // 有效期（秒）
-		"/",                      // 路径
-		"",                       // 域名（空表示当前域名）
-		false,                    // secure（生产环境建议true）
-		true,                     // httpOnly
-	)
-
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  "登录成功",
-		"data": gin.H{
-			"token": token,
-			"user": gin.H{
-				"id":        user.ID,
-				"accountId": user.AccountID,
-				"nickname":  user.Nickname,
-				"avatar":    user.Avatar,
-				"loginType": user.LoginType,
-				"createdAt": user.CreatedAt,
-			},
-		},
-	})
-}
-
 // GetUserInfo 获取用户信息
 func GetUserInfo(c *gin.Context) {
 	userID, _ := c.Get("userId")
 
 	var user model.User
-	if err := database.DB.First(&user, userID).Error; err != nil {
+	if err := database.DB.Where("user_id = ?", userID).First(&user).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 404,
 			"msg":  "用户不存在",
@@ -185,11 +40,9 @@ func GetUserInfo(c *gin.Context) {
 		"code": 200,
 		"msg":  "获取成功",
 		"data": gin.H{
-			"id":        user.ID,
-			"accountId": user.AccountID,
+			"userId":    user.UserID,
 			"nickname":  user.Nickname,
 			"avatar":    user.Avatar,
-			"loginType": user.LoginType,
 			"createdAt": user.CreatedAt,
 		},
 	})
@@ -216,7 +69,7 @@ func UpdateUserInfo(c *gin.Context) {
 		updates["avatar"] = req.Avatar
 	}
 
-	if err := database.DB.Model(&model.User{}).Where("id = ?", userID).Updates(updates).Error; err != nil {
+	if err := database.DB.Model(&model.User{}).Where("user_id = ?", userID).Updates(updates).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"code": 500,
 			"msg":  "更新失败",
@@ -227,72 +80,6 @@ func UpdateUserInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"msg":  "更新成功",
-	})
-}
-
-// ChangePassword 修改密码
-func ChangePassword(c *gin.Context) {
-	userID, _ := c.Get("userId")
-
-	var req ChangePasswordRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code": 400,
-			"msg":  "参数错误",
-		})
-		return
-	}
-
-	// 查找用户
-	var user model.User
-	if err := database.DB.First(&user, userID).Error; err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 404,
-			"msg":  "用户不存在",
-		})
-		return
-	}
-
-	// 验证旧密码
-	if !utils.CheckPassword(req.OldPassword, user.Password) {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "旧密码错误",
-		})
-		return
-	}
-
-	// 密码长度验证
-	if len(req.NewPassword) < 6 {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "新密码长度不能少于6位",
-		})
-		return
-	}
-
-	// 加密新密码
-	hashedPassword, err := utils.HashPassword(req.NewPassword)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"code": 500,
-			"msg":  "密码加密失败",
-		})
-		return
-	}
-
-	// 更新密码
-	if err := database.DB.Model(&model.User{}).Where("id = ?", userID).Update("password", hashedPassword).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"code": 500,
-			"msg":  "修改密码失败",
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  "修改密码成功",
 	})
 }
 
@@ -319,15 +106,29 @@ func WechatLogin(c *gin.Context) {
 
 	// 查找是否已存在该 openid 的用户
 	var user model.User
-	result := database.DB.Where("account_id = ? AND login_type = ?", session.OpenID, "wechat").First(&user)
+	result := database.DB.Where("wx_open_id = ?", session.OpenID).First(&user)
 
 	if result.Error != nil {
 		// 用户不存在，创建新用户
+		// 生成8位用户ID
+		userID := utils.GenerateUserID()
+
+		// 检查生成的 UserID 是否已存在，如果存在则重新生成
+		for {
+			var existUser model.User
+			if err := database.DB.Where("user_id = ?", userID).First(&existUser).Error; err != nil {
+				// 不存在，可以使用
+				break
+			}
+			// 存在，重新生成
+			userID = utils.GenerateUserID()
+		}
+
 		user = model.User{
-			AccountID: session.OpenID,
-			Nickname:  req.Nickname,
-			Avatar:    req.Avatar,
-			LoginType: "wechat",
+			UserID:   userID,
+			WxOpenID: session.OpenID,
+			Nickname: req.Nickname,
+			Avatar:   req.Avatar,
 		}
 
 		if err := database.DB.Create(&user).Error; err != nil {
@@ -345,15 +146,12 @@ func WechatLogin(c *gin.Context) {
 		if req.Avatar != "" {
 			updates["avatar"] = req.Avatar
 		}
-		if session.UnionID != "" {
-			updates["wx_union_id"] = session.UnionID
-		}
 
 		database.DB.Model(&user).Updates(updates)
 	}
 
-	// 生成 Token
-	token, err := utils.GenerateToken(user.ID, user.AccountID)
+	// 生成 Token，使用 UserID
+	token, err := utils.GenerateToken(user.UserID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"code": 500,
@@ -379,12 +177,12 @@ func WechatLogin(c *gin.Context) {
 		"data": gin.H{
 			"token": token,
 			"user": gin.H{
-				"id":        user.ID,
+				"userId":    user.UserID,
 				"nickname":  user.Nickname,
 				"avatar":    user.Avatar,
-				"loginType": user.LoginType,
 				"createdAt": user.CreatedAt,
 			},
 		},
 	})
 }
+

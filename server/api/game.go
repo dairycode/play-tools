@@ -124,7 +124,7 @@ func CreateRoom(c *gin.Context) {
 
 	// 房主自动加入房间
 	var user model.User
-	database.DB.First(&user, userID)
+	database.DB.Where("user_id = ?", userID).First(&user)
 
 	member := model.RoomMember{
 		RoomID:   roomID,
@@ -198,7 +198,7 @@ func JoinRoom(c *gin.Context) {
 
 	// 加入房间
 	var user model.User
-	database.DB.First(&user, userID)
+	database.DB.Where("user_id = ?", userID).First(&user)
 
 	member := model.RoomMember{
 		RoomID:   req.RoomID,

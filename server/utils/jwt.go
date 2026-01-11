@@ -11,16 +11,14 @@ var jwtSecret = []byte("play-tools-secret-key-2024")
 
 // Claims JWT声明
 type Claims struct {
-	UserID    uint   `json:"userId"`
-	AccountID string `json:"accountId"`
+	UserID uint `json:"userId"` // 使用User模型的UserID字段（8位正整数）
 	jwt.RegisteredClaims
 }
 
 // GenerateToken 生成Token
-func GenerateToken(userID uint, accountID string) (string, error) {
+func GenerateToken(userID uint) (string, error) {
 	claims := Claims{
-		UserID:    userID,
-		AccountID: accountID,
+		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(7 * 24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

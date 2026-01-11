@@ -16,7 +16,7 @@
           <view class="text-white" style="font-size: 56rpx; font-weight: bold; margin-bottom: 16rpx;">
             {{ userInfo?.nickname || '未设置昵称' }}
           </view>
-          <view class="text-white-80" style="font-size: 28rpx;">@{{ userInfo?.username }}</view>
+          <view class="text-white-80" style="font-size: 28rpx;">ID: {{ userInfo?.userId }}</view>
         </view>
       </view>
     </view>
@@ -39,26 +39,7 @@
             </template>
           </u-cell>
 
-          <!-- 只有账号密码登录的用户才显示修改密码选项 -->
-          <template v-if="userInfo?.loginType === 'normal'">
-            <u-line :color="'rgba(255, 255, 255, 0.1)'" :margin="'16rpx 0'"></u-line>
-
-            <u-cell
-              title="修改密码"
-              :isLink="true"
-              :border="false"
-              @click="showChangePassword"
-              :customStyle="{
-                background: 'transparent'
-              }"
-            >
-              <template #icon>
-                <text style="font-size: 56rpx; margin-right: 32rpx;">🔒</text>
-              </template>
-            </u-cell>
-
-            <u-line :color="'rgba(255, 255, 255, 0.1)'" :margin="'16rpx 0'"></u-line>
-          </template>
+          <u-line :color="'rgba(255, 255, 255, 0.1)'" :margin="'16rpx 0'"></u-line>
 
           <u-cell
             title="退出登录"
@@ -107,54 +88,6 @@
       </view>
     </view>
 
-    <!-- 修改密码弹窗 -->
-    <view v-if="showPasswordModal" class="password-modal-overlay" @click="resetPasswordForm">
-      <view class="password-modal-content" @click.stop>
-        <!-- 标题 -->
-        <view class="modal-title">修改密码</view>
-
-        <!-- 表单内容 -->
-        <view class="modal-form">
-          <view class="form-item">
-            <view class="form-label">旧密码</view>
-            <input
-              v-model="passwordForm.oldPassword"
-              type="password"
-              placeholder="请输入旧密码"
-              class="form-input"
-            />
-          </view>
-          <view class="form-item">
-            <view class="form-label">新密码</view>
-            <input
-              v-model="passwordForm.newPassword"
-              type="password"
-              placeholder="请输入新密码（至少6位）"
-              class="form-input"
-            />
-          </view>
-          <view class="form-item">
-            <view class="form-label">确认密码</view>
-            <input
-              v-model="passwordForm.confirmPassword"
-              type="password"
-              placeholder="请再次输入新密码"
-              class="form-input"
-            />
-          </view>
-
-          <!-- 错误提示 -->
-          <view v-if="errorMessage" class="error-message">{{ errorMessage }}</view>
-        </view>
-
-        <!-- 按钮区域 -->
-        <view class="modal-actions">
-          <button class="modal-btn cancel-btn" @click.stop="resetPasswordForm">取消</button>
-          <button class="modal-btn confirm-btn" @click.stop="handleChangePassword">确定</button>
-        </view>
-      </view>
-    </view>
-
     <!-- 退出登录弹窗 -->
     <view v-if="showLogoutModal" class="password-modal-overlay" @click="showLogoutModal = false">
       <view class="password-modal-content" @click.stop>
@@ -187,24 +120,17 @@
 import { ref, computed, onMounted } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { getUserInfo as getStorageUserInfo, logout, isLogin } from '@/utils/auth'
-import { getUserInfo as fetchUserInfo, updateUserInfo, changePassword } from '@/api/user'
+import { getUserInfo as fetchUserInfo, updateUserInfo } from '@/api/user'
 import { setUserInfo } from '@/utils/auth'
 import type { User } from '@/types'
 
 const userInfo = ref<User | null>(null)
 const showNicknameModal = ref(false)
-const showPasswordModal = ref(false)
 const showLogoutModal = ref(false)
 const nicknameForm = ref({
   nickname: ''
 })
-const passwordForm = ref({
-  oldPassword: '',
-  newPassword: '',
-  confirmPassword: ''
-})
 const nicknameError = ref('')
-const errorMessage = ref('')
 const toastVisible = ref(false)
 const toastMessage = ref('')
 
@@ -291,72 +217,6 @@ const handleUpdateNickname = async () => {
   } catch (error) {
     uni.hideLoading()
     nicknameError.value = '修改失败，请稍后重试'
-  }
-}
-
-const showChangePassword = () => {
-  showPasswordModal.value = true
-}
-
-const resetPasswordForm = () => {
-  passwordForm.value = {
-    oldPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  }
-  errorMessage.value = ''
-  showPasswordModal.value = false
-}
-
-const handleChangePassword = async () => {
-  const { oldPassword, newPassword, confirmPassword } = passwordForm.value
-
-  // 清空之前的错误信息
-  errorMessage.value = ''
-
-  console.log('handleChangePassword called', { oldPassword, newPassword, confirmPassword })
-
-  // 验证
-  if (!oldPassword || !newPassword || !confirmPassword) {
-    console.log('验证失败：请填写完整信息')
-    errorMessage.value = '请填写完整信息'
-    return
-  }
-
-  if (newPassword.length < 6) {
-    console.log('验证失败：新密码长度不能少于6位')
-    errorMessage.value = '新密码长度不能少于6位'
-    return
-  }
-
-  if (newPassword !== confirmPassword) {
-    console.log('验证失败：两次输入的新密码不一致')
-    errorMessage.value = '两次输入的新密码不一致'
-    return
-  }
-
-  try {
-    console.log('开始调用修改密码 API')
-    uni.showLoading({ title: '修改中...' })
-    await changePassword({
-      old_password: oldPassword,
-      new_password: newPassword
-    })
-
-    uni.hideLoading()
-    showToast('修改成功，请重新登录', 2000)
-
-    // 重置表单并关闭弹窗
-    resetPasswordForm()
-
-    // 2秒后退出登录
-    setTimeout(() => {
-      logout()
-    }, 2000)
-  } catch (error) {
-    console.error('修改密码失败', error)
-    uni.hideLoading()
-    errorMessage.value = '修改密码失败，请检查旧密码是否正确'
   }
 }
 

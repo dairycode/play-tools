@@ -7,11 +7,10 @@ import (
 // User 用户模型
 type User struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
-	AccountID string    `gorm:"type:varchar(100);not null;uniqueIndex:idx_account_login" json:"accountId"` // 账号标识：普通登录存用户名，微信登录存OpenID
-	Password  string    `gorm:"type:varchar(100)" json:"-"`                                                 // 普通登录密码，微信登录可为空
-	LoginType string    `gorm:"type:varchar(20);not null;default:'normal';uniqueIndex:idx_account_login" json:"loginType"` // 登录类型：normal, wechat
-	Nickname  string    `gorm:"type:varchar(50);not null" json:"nickname"`                                  // 昵称，必填
-	Avatar    string    `gorm:"type:varchar(500)" json:"avatar"`                                            // 头像URL
+	UserID    uint      `gorm:"uniqueIndex;not null" json:"userId"`   // 用户唯一ID，8位正整数
+	Nickname  string    `gorm:"type:varchar(50);not null" json:"nickname"` // 昵称，必填
+	Avatar    string    `gorm:"type:varchar(500)" json:"avatar"`      // 头像URL
+	WxOpenID  string    `gorm:"type:varchar(100);uniqueIndex;not null" json:"-"` // 微信OpenID，不返回给前端
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
@@ -35,7 +34,6 @@ type RoomMember struct {
 	Nickname string `gorm:"type:varchar(50);not null" json:"nickname"` // 冗余存储，方便查询
 	Avatar   string `gorm:"type:varchar(500)" json:"avatar"`           // 冗余存储用户头像
 	IsReady  bool   `gorm:"default:false" json:"isReady"`              // 是否准备
-	User     User   `gorm:"foreignKey:UserID" json:"user,omitempty"`
 }
 
 // Transaction 交易记录模型

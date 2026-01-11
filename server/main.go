@@ -40,8 +40,6 @@ func main() {
 		// 用户相关接口（无需认证）
 		userGroup := apiGroup.Group("/user")
 		{
-			userGroup.POST("/register", api.Register)
-			userGroup.POST("/login", api.Login)
 			userGroup.POST("/wechat-login", api.WechatLogin) // 微信小程序登录
 		}
 
@@ -52,7 +50,6 @@ func main() {
 			// 用户信息
 			authGroup.GET("/user/info", api.GetUserInfo)
 			authGroup.PUT("/user/update", api.UpdateUserInfo)
-			authGroup.PUT("/user/password", api.ChangePassword)
 
 			// 游戏相关接口
 			gameGroup := authGroup.Group("/game")

@@ -53,9 +53,8 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// 将用户信息存储到上下文
+		// 将用户信息存储到上下文（userId 是 User 模型的 UserID 字段，8位正整数）
 		c.Set("userId", claims.UserID)
-		c.Set("accountId", claims.AccountID)
 		c.Next()
 	}
 }

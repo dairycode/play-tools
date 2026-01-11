@@ -2,11 +2,9 @@
 
 // 用户类型
 export interface User {
-  id: number
-  username: string
+  userId: number      // 用户唯一ID，8位正整数
   nickname: string
   avatar?: string
-  loginType?: string  // 登录类型：normal, wechat
   createdAt: string
 }
 
