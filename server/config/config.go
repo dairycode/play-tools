@@ -12,6 +12,7 @@ type Config struct {
 	Database DatabaseConfig `yaml:"database"`
 	Server   ServerConfig   `yaml:"server"`
 	Wechat   WechatConfig   `yaml:"wechat"`
+	Upload   UploadConfig   `yaml:"upload"`
 }
 
 // DatabaseConfig 数据库配置
@@ -33,6 +34,12 @@ type ServerConfig struct {
 type WechatConfig struct {
 	AppID  string `yaml:"appid"`  // 小程序 AppID
 	Secret string `yaml:"secret"` // 小程序 AppSecret
+}
+
+// UploadConfig 文件上传配置
+type UploadConfig struct {
+	MaxSize    int64  `yaml:"max_size"`    // 最大文件大小（字节）
+	AvatarPath string `yaml:"avatar_path"` // 头像存储路径
 }
 
 var AppConfig *Config
@@ -89,5 +96,15 @@ func setDefaultValues(config *Config) {
 	if config.Server.Host == "" {
 		config.Server.Host = "0.0.0.0"
 		log.Println("Server.Host not set, using default: 0.0.0.0")
+	}
+
+	// 上传配置默认值
+	if config.Upload.MaxSize == 0 {
+		config.Upload.MaxSize = 5 * 1024 * 1024 // 5MB
+		log.Println("Upload.MaxSize not set, using default: 5MB")
+	}
+	if config.Upload.AvatarPath == "" {
+		config.Upload.AvatarPath = "./uploads/avatars"
+		log.Println("Upload.AvatarPath not set, using default: ./uploads/avatars")
 	}
 }

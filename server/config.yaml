@@ -17,3 +17,8 @@ server:
 wechat:
   appid: ""           # 小程序 AppID (在微信公众平台获取)
   secret: ""          # 小程序 AppSecret (在微信公众平台获取)
+
+# 文件上传配置
+upload:
+  max_size: 5242880   # 最大文件大小：5MB (5 * 1024 * 1024)
+  avatar_path: "./uploads/avatars" # 头像存储路径
