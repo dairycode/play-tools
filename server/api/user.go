@@ -8,6 +8,7 @@ import (
 	"play-tools/database"
 	"play-tools/model"
 	"play-tools/utils"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,13 +39,19 @@ func GetUserInfo(c *gin.Context) {
 		return
 	}
 
+	// 拼接头像完整URL
+	avatarURL := user.Avatar
+	if avatarURL != "" && !strings.HasPrefix(avatarURL, "http") {
+		avatarURL = config.AppConfig.Server.BaseURL + avatarURL
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"msg":  "获取成功",
 		"data": gin.H{
 			"userId":    user.UserID,
 			"nickname":  user.Nickname,
-			"avatar":    user.Avatar,
+			"avatar":    avatarURL,
 			"createdAt": user.CreatedAt,
 		},
 	})
@@ -173,6 +180,12 @@ func WechatLogin(c *gin.Context) {
 		true,
 	)
 
+	// 拼接头像完整URL
+	avatarURL := user.Avatar
+	if avatarURL != "" && !strings.HasPrefix(avatarURL, "http") {
+		avatarURL = config.AppConfig.Server.BaseURL + avatarURL
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"msg":  "登录成功",
@@ -181,7 +194,7 @@ func WechatLogin(c *gin.Context) {
 			"user": gin.H{
 				"userId":    user.UserID,
 				"nickname":  user.Nickname,
-				"avatar":    user.Avatar,
+				"avatar":    avatarURL,
 				"createdAt": user.CreatedAt,
 			},
 		},
@@ -236,17 +249,20 @@ func UploadAvatar(c *gin.Context) {
 		return
 	}
 
-	// 构建公开访问的URL
-	avatarURL := fmt.Sprintf("/uploads/avatars/%s", newFileName)
+	// 相对路径（用于数据库存储）
+	relativeURL := fmt.Sprintf("/uploads/avatars/%s", newFileName)
 
-	// 更新用户头像信息到数据库（可选）
-	database.DB.Model(&model.User{}).Where("user_id = ?", userID).Update("avatar", avatarURL)
+	// 更新用户头像信息到数据库（存储相对路径）
+	database.DB.Model(&model.User{}).Where("user_id = ?", userID).Update("avatar", relativeURL)
+
+	// 完整URL（返回给前端）
+	fullURL := fmt.Sprintf("%s%s", config.AppConfig.Server.BaseURL, relativeURL)
 
 	c.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"msg":  "上传成功",
 		"data": gin.H{
-			"url": avatarURL,
+			"url": fullURL,
 		},
 	})
 }

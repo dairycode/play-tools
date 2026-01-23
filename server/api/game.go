@@ -2,9 +2,11 @@ package api
 
 import (
 	"net/http"
+	"play-tools/config"
 	"play-tools/database"
 	"play-tools/model"
 	"sort"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -36,10 +38,10 @@ type FinishGameRequest struct {
 // RoomDetail 房间详情
 type RoomDetail struct {
 	model.GameRoom
-	Members      []MemberInfo      `json:"members"`
+	Members      []MemberInfo        `json:"members"`
 	Transactions []model.Transaction `json:"transactions"`
-	IsOwner      bool              `json:"isOwner"`
-	IsMember     bool              `json:"isMember"`
+	IsOwner      bool                `json:"isOwner"`
+	IsMember     bool                `json:"isMember"`
 }
 
 // MemberInfo 成员信息
@@ -255,10 +257,16 @@ func GetRoomInfo(c *gin.Context) {
 	// 构建成员信息列表
 	memberInfos := make([]MemberInfo, 0, len(members))
 	for _, member := range members {
+		// 拼接头像完整URL
+		avatarURL := member.Avatar
+		if avatarURL != "" && !strings.HasPrefix(avatarURL, "http") {
+			avatarURL = config.AppConfig.Server.BaseURL + avatarURL
+		}
+
 		memberInfos = append(memberInfos, MemberInfo{
 			UserID:   member.UserID,
 			Nickname: member.Nickname,
-			Avatar:   member.Avatar, // 使用冗余存储的头像，避免额外查询
+			Avatar:   avatarURL,
 			IsReady:  member.IsReady,
 			Balance:  balanceMap[member.UserID],
 		})

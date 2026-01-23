@@ -26,8 +26,9 @@ type DatabaseConfig struct {
 
 // ServerConfig 服务器配置
 type ServerConfig struct {
-	Port string `yaml:"port"`
-	Host string `yaml:"host"`
+	Port    string `yaml:"port"`
+	Host    string `yaml:"host"`
+	BaseURL string `yaml:"base_url"` // 服务器公网访问地址
 }
 
 // WechatConfig 微信小程序配置
