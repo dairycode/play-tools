@@ -127,7 +127,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { updateUserInfo } from '@/api/user'
+import { updateUserInfo, uploadAvatar as uploadAvatarApi } from '@/api/user'
 import { getUserInfo, setUserInfo } from '@/utils/auth'
 
 const statusBarHeight = ref(0)
@@ -159,9 +159,10 @@ onLoad((options: any) => {
 // 选择头像（微信小程序）
 const onChooseAvatar = (e: any) => {
   const { avatarUrl: tempPath } = e.detail
-  avatarUrl.value = tempPath
+  console.log('选择头像，临时路径:', tempPath)
+  avatarUrl.value = tempPath  // 先显示临时图片
 
-  // 上传头像到服务器
+  // 立即上传到服务器获取永久URL
   uploadAvatar(tempPath)
 }
 
@@ -183,28 +184,58 @@ const chooseImage = () => {
 
 // 上传头像到服务器
 const uploadAvatar = async (filePath: string) => {
+  console.log('开始上传头像，文件路径:', filePath)
+  
+  // 验证文件路径
+  if (!filePath) {
+    console.error('文件路径为空')
+    uni.showToast({
+      title: '文件路径无效',
+      icon: 'none'
+    })
+    return
+  }
+
   try {
     uni.showLoading({
       title: '上传中...'
     })
 
-    // TODO: 这里需要实现文件上传接口
-    // 目前先使用临时路径
-    // const uploadRes = await uni.uploadFile({
-    //   url: BASE_URL + '/user/upload-avatar',
-    //   filePath: filePath,
-    //   name: 'avatar',
-    //   header: {
-    //     'Authorization': 'Bearer ' + getToken()
-    //   }
-    // })
-
-    uni.hideLoading()
+    console.log('调用上传API...')
+    const res = await uploadAvatarApi(filePath)
+    console.log('上传API返回:', res)
+    
+    // 将临时路径替换为服务器返回的公开URL
+    if (res.data && res.data.url) {
+      avatarUrl.value = res.data.url
+      console.log('头像上传成功，公开URL:', res.data.url)
+      
+      uni.hideLoading()
+      uni.showToast({
+        title: '上传成功',
+        icon: 'success',
+        duration: 1500
+      })
+    } else {
+      console.error('服务器未返回URL:', res)
+      uni.hideLoading()
+      uni.showToast({
+        title: '上传失败：未获取到URL',
+        icon: 'none'
+      })
+    }
   } catch (error) {
     uni.hideLoading()
-    console.error('上传头像失败:', error)
+    console.error('上传头像异常:', error)
+    // 打印完整的错误对象
+    console.error('错误详情:', JSON.stringify(error))
+    uni.showToast({
+      title: '上传失败，请重试',
+      icon: 'none'
+    })
   }
 }
+
 
 // 昵称输入
 const onNicknameInput = (e: any) => {
@@ -229,16 +260,16 @@ const handleSubmit = async () => {
       title: '保存中...'
     })
 
-    // 更新用户信息
+    // 更新用户信息（只保存昵称，头像已在上传时保存）
     await updateUserInfo({
-      nickname: nickname.value.trim(),
-      avatar: avatarUrl.value
+      nickname: nickname.value.trim()
     })
 
     // 更新本地存储的用户信息
     const userInfo = getUserInfo()
     if (userInfo) {
       userInfo.nickname = nickname.value.trim()
+      // avatarUrl 已在上传时更新，同步到本地存储
       if (avatarUrl.value) {
         userInfo.avatar = avatarUrl.value
       }

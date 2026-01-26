@@ -3,9 +3,12 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"path/filepath"
+	"play-tools/config"
 	"play-tools/database"
 	"play-tools/model"
 	"play-tools/utils"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -36,13 +39,19 @@ func GetUserInfo(c *gin.Context) {
 		return
 	}
 
+	// 拼接头像完整URL
+	avatarURL := user.Avatar
+	if avatarURL != "" && !strings.HasPrefix(avatarURL, "http") {
+		avatarURL = config.AppConfig.Server.BaseURL + avatarURL
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"msg":  "获取成功",
 		"data": gin.H{
 			"userId":    user.UserID,
 			"nickname":  user.Nickname,
-			"avatar":    user.Avatar,
+			"avatar":    avatarURL,
 			"createdAt": user.CreatedAt,
 		},
 	})
@@ -171,6 +180,12 @@ func WechatLogin(c *gin.Context) {
 		true,
 	)
 
+	// 拼接头像完整URL
+	avatarURL := user.Avatar
+	if avatarURL != "" && !strings.HasPrefix(avatarURL, "http") {
+		avatarURL = config.AppConfig.Server.BaseURL + avatarURL
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"msg":  "登录成功",
@@ -179,10 +194,75 @@ func WechatLogin(c *gin.Context) {
 			"user": gin.H{
 				"userId":    user.UserID,
 				"nickname":  user.Nickname,
-				"avatar":    user.Avatar,
+				"avatar":    avatarURL,
 				"createdAt": user.CreatedAt,
 			},
 		},
 	})
 }
 
+// UploadAvatar 上传头像
+func UploadAvatar(c *gin.Context) {
+	userID, exists := c.Get("userId")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"code": 401,
+			"msg":  "未登录",
+		})
+		return
+	}
+
+	// 获取上传的文件
+	file, err := c.FormFile("avatar")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code": 400,
+			"msg":  "未找到上传的文件",
+		})
+		return
+	}
+
+	// 验证文件
+	maxSize := config.AppConfig.Upload.MaxSize
+	if err := utils.ValidateImageFile(file, maxSize); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code": 400,
+			"msg":  err.Error(),
+		})
+		return
+	}
+
+	// 使用 userId + 文件扩展名作为文件名
+	ext := filepath.Ext(file.Filename)
+	newFileName := fmt.Sprintf("%d%s", userID.(uint), ext)
+
+	// 构建保存路径
+	avatarPath := config.AppConfig.Upload.AvatarPath
+	destPath := fmt.Sprintf("%s/%s", avatarPath, newFileName)
+
+	// 保存文件
+	if err := utils.SaveUploadedFile(file, destPath); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code": 500,
+			"msg":  fmt.Sprintf("保存文件失败: %v", err),
+		})
+		return
+	}
+
+	// 相对路径（用于数据库存储）
+	relativeURL := fmt.Sprintf("/uploads/avatars/%s", newFileName)
+
+	// 更新用户头像信息到数据库（存储相对路径）
+	database.DB.Model(&model.User{}).Where("user_id = ?", userID).Update("avatar", relativeURL)
+
+	// 完整URL（返回给前端）
+	fullURL := fmt.Sprintf("%s%s", config.AppConfig.Server.BaseURL, relativeURL)
+
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  "上传成功",
+		"data": gin.H{
+			"url": fullURL,
+		},
+	})
+}

@@ -2,7 +2,7 @@
   <view class="game-bg">
     <view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
 
-    <view style="padding: 32rpx; padding-top: 160rpx; position: relative; z-index: 10;">
+    <view style="padding: 32rpx; display: flex; flex-direction: column; justify-content: center; min-height: 100vh; position: relative; z-index: 10;">
       <!-- Logo/Icon -->
       <view style="display: flex; justify-content: center; margin-bottom: 32rpx;">
         <view class="glass-card" style="width: 160rpx; height: 160rpx; display: flex; align-items: center; justify-content: center;">

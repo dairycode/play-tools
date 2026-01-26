@@ -34,6 +34,9 @@ func main() {
 	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
 	r.Use(cors.New(corsConfig))
 
+	// 静态文件服务 - 用于访问上传的文件
+	r.Static("/uploads", "./uploads")
+
 	// API 路由组
 	apiGroup := r.Group("/api")
 	{
@@ -50,6 +53,7 @@ func main() {
 			// 用户信息
 			authGroup.GET("/user/info", api.GetUserInfo)
 			authGroup.PUT("/user/update", api.UpdateUserInfo)
+			authGroup.POST("/user/upload-avatar", api.UploadAvatar)
 
 			// 游戏相关接口
 			gameGroup := authGroup.Group("/game")

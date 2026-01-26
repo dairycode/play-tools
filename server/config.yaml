@@ -12,8 +12,14 @@ database:
 server:
   host: 0.0.0.0       # 服务器监听地址 (0.0.0.0 表示监听所有网络接口)
   port: "8080"        # 服务器端口
+  base_url: "https://dairycode.top:8080"  # 服务器公网访问地址（用于拼接完整URL）
 
 # 微信小程序配置
 wechat:
   appid: ""           # 小程序 AppID (在微信公众平台获取)
   secret: ""          # 小程序 AppSecret (在微信公众平台获取)
+
+# 文件上传配置
+upload:
+  max_size: 5242880   # 最大文件大小：5MB (5 * 1024 * 1024)
+  avatar_path: "./uploads/avatars" # 头像存储路径
