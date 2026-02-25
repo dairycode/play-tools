@@ -122,43 +122,38 @@
 
       <!-- Playing Status -->
       <view v-if="roomDetail?.status === 'playing'" class="animate-fade-in">
-        <!-- Members Section -->
-        <view class="glass-card" style="padding: 48rpx; margin-bottom: 32rpx;">
-          <view class="text-white" style="font-size: 36rpx; font-weight: 600; margin-bottom: 32rpx;">
-            房间成员 ({{ roomDetail?.members?.length || 0 }}人)
-          </view>
-          <view style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24rpx;">
-            <view
-              v-for="member in roomDetail?.members"
-              :key="member.userId"
-              style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border-radius: 12rpx; border: 2rpx solid rgba(255, 255, 255, 0.1); padding: 32rpx;"
-            >
-              <view style="display: flex; flex-direction: column; align-items: center;">
-                <view class="btn-primary" style="width: 128rpx; height: 128rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 56rpx; font-weight: bold; color: white; margin-bottom: 16rpx; overflow: hidden;">
-                  <image
-                    v-if="member.avatar"
-                    :src="member.avatar"
-                    mode="aspectFill"
-                    style="width: 100%; height: 100%;"
-                  />
-                  <text v-else>{{ member.nickname.substring(0, 1) }}</text>
-                </view>
-                <view class="text-white" style="font-size: 28rpx; margin-bottom: 8rpx;">{{ member.nickname }}</view>
-                <view :style="{
-                  fontSize: '32rpx',
-                  fontWeight: 'bold',
-                  color: member.balance > 0 ? '#f44336' : member.balance < 0 ? '#66bb6a' : 'rgba(255, 255, 255, 0.5)'
-                }">
-                  {{ member.balance >= 0 ? '+' : '' }}{{ member.balance }}
-                </view>
-              </view>
-            </view>
-          </view>
-        </view>
-
         <!-- Transfer Section -->
         <view class="glass-card" style="padding: 48rpx; margin-bottom: 32rpx;">
           <view class="text-white" style="font-size: 36rpx; font-weight: 600; margin-bottom: 32rpx;">我要转账</view>
+
+          <!-- Members with Balance -->
+          <view style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24rpx; margin-bottom: 32rpx;">
+            <view
+              v-for="member in otherMembers"
+              :key="member.userId"
+              @click="handleTransfer(member)"
+              style="display: flex; flex-direction: column; align-items: center; cursor: pointer;"
+            >
+              <view class="btn-primary" style="width: 128rpx; height: 128rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48rpx; font-weight: bold; color: white; margin-bottom: 16rpx; overflow: hidden;">
+                <image
+                  v-if="member.avatar"
+                  :src="member.avatar"
+                  mode="aspectFill"
+                  style="width: 100%; height: 100%;"
+                />
+                <text v-else>{{ member.nickname.substring(0, 1) }}</text>
+              </view>
+              <view class="text-white-80" style="font-size: 24rpx; text-align: center;">{{ member.nickname }}</view>
+              <view :style="{
+                fontSize: '24rpx',
+                fontWeight: 'bold',
+                marginTop: '4rpx',
+                color: member.balance > 0 ? '#f44336' : member.balance < 0 ? '#66bb6a' : 'rgba(255, 255, 255, 0.5)'
+              }">
+                {{ member.balance >= 0 ? '+' : '' }}{{ member.balance }}
+              </view>
+            </view>
+          </view>
 
           <!-- Amount Input -->
           <u-input
@@ -180,7 +175,7 @@
           ></u-input>
 
           <!-- Quick Amounts -->
-          <view style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16rpx; margin-bottom: 32rpx;">
+          <view style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16rpx;">
             <view
               v-for="amount in quickAmounts"
               :key="amount"
@@ -188,27 +183,6 @@
               style="height: 96rpx; background: rgba(255, 255, 255, 0.1); border-radius: 12rpx; display: flex; align-items: center; justify-content: center; color: rgba(255, 255, 255, 0.7); font-size: 28rpx; cursor: pointer; transition: all 0.3s;"
             >
               {{ amount }}
-            </view>
-          </view>
-
-          <!-- Target Members -->
-          <view style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24rpx;">
-            <view
-              v-for="member in otherMembers"
-              :key="member.userId"
-              @click="handleTransfer(member)"
-              style="display: flex; flex-direction: column; align-items: center; cursor: pointer;"
-            >
-              <view class="btn-primary" style="width: 128rpx; height: 128rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48rpx; font-weight: bold; color: white; margin-bottom: 16rpx; overflow: hidden;">
-                <image
-                  v-if="member.avatar"
-                  :src="member.avatar"
-                  mode="aspectFill"
-                  style="width: 100%; height: 100%;"
-                />
-                <text v-else>{{ member.nickname.substring(0, 1) }}</text>
-              </view>
-              <view class="text-white-80" style="font-size: 24rpx; text-align: center;">{{ member.nickname }}</view>
             </view>
           </view>
         </view>
