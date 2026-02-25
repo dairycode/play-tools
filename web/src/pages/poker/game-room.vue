@@ -248,7 +248,7 @@ const roomDetail = ref<RoomDetail | null>(null)
 const transferAmount = ref<number | string>('')
 let refreshTimer: number | null = null
 
-const quickAmounts = [10, 20, 50, 100, 200, 500]
+const quickAmounts = [1, 5, 10, 20, 50, 100]
 
 const currentUserId = computed(() => {
   const userInfo = getUserInfo()
@@ -430,7 +430,7 @@ const handleStart = async () => {
 }
 
 const setAmount = (amount: number) => {
-  transferAmount.value = amount
+  transferAmount.value = (Number(transferAmount.value) || 0) + amount
 }
 
 const handleTransfer = async (member: Member) => {
