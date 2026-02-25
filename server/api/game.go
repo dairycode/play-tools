@@ -245,7 +245,7 @@ func GetRoomInfo(c *gin.Context) {
 
 	// 获取所有交易记录
 	var transactions []model.Transaction
-	database.DB.Where("room_id = ?", roomID).Order("created_at").Find(&transactions)
+	database.DB.Where("room_id = ?", roomID).Order("created_at DESC").Find(&transactions)
 
 	// 计算每个成员的余额
 	balanceMap := make(map[uint]int)
