@@ -402,11 +402,12 @@ func FinishGame(c *gin.Context) {
 		return
 	}
 
-	// 只有房主可以结束游戏
-	if room.OwnerID != userID.(uint) {
+	// 检查是否是房间成员
+	var member model.RoomMember
+	if err := database.DB.Where("room_id = ? AND user_id = ?", req.RoomID, userID).First(&member).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 403,
-			"msg":  "只有房主可以结束游戏",
+			"msg":  "你不是房间成员",
 		})
 		return
 	}

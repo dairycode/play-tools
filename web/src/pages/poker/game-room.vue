@@ -55,7 +55,7 @@
         ></u-button>
         <!-- #endif -->
         <u-button
-          v-if="roomDetail?.isOwner && roomDetail?.status === 'playing'"
+          v-if="roomDetail?.status === 'playing'"
           text="结束游戏"
           @click="handleFinish"
           :customStyle="{
