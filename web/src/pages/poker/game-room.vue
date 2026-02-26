@@ -226,7 +226,7 @@ const quickAmounts = [1, 5, 10, 20, 50, 100]
 
 const currentUserId = computed(() => {
   const userInfo = getUserInfo()
-  return userInfo?.id
+  return userInfo?.userId
 })
 
 const currentUserReady = computed(() => {
