@@ -260,7 +260,7 @@ const startButtonText = computed(() => {
 
 const otherMembers = computed(() => {
   if (!roomDetail.value?.members) return []
-  return roomDetail.value.members.filter(m => m.userId !== currentUserId.value)
+  return roomDetail.value.members
 })
 
 onLoad(async (options: any) => {
@@ -408,6 +408,14 @@ const setAmount = (amount: number) => {
 }
 
 const handleTransfer = async (member: Member) => {
+  if (member.userId === currentUserId.value) {
+    uni.showToast({
+      title: '不能给自己转账',
+      icon: 'none'
+    })
+    return
+  }
+
   const amount = Number(transferAmount.value)
   if (!amount || amount <= 0) {
     uni.showToast({
