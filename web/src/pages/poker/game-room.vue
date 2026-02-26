@@ -290,19 +290,17 @@ onLoad(async (options: any) => {
 
     if (options.join === '1') {
       try {
-        await joinRoom({ roomId: roomId.value })
+        const res = await joinRoom({ roomId: roomId.value })
         uni.showToast({
-          title: '成功加入房间',
+          title: res.msg?.includes('已经加入') ? '已在房间中' : '成功加入房间',
           icon: 'success'
         })
       } catch (error: any) {
-        if (!error.msg?.includes('已经加入')) {
-          uni.showToast({
-            title: error.msg || '加入失败',
-            icon: 'none'
-          })
-          return
-        }
+        uni.showToast({
+          title: error.msg || '加入失败',
+          icon: 'none'
+        })
+        return
       }
     }
 

@@ -167,6 +167,18 @@ func JoinRoom(c *gin.Context) {
 		return
 	}
 
+	// 优先检查是否已经加入，已在房间中的用户直接返回成功
+	var existMember model.RoomMember
+	err := database.DB.Where("room_id = ? AND user_id = ?", req.RoomID, userID).First(&existMember).Error
+	if err == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"msg":  "已经加入该房间",
+			"data": room,
+		})
+		return
+	}
+
 	// 检查房间状态，只能加入等待中的房间
 	if room.Status != "waiting" {
 		c.JSON(http.StatusOK, gin.H{
@@ -183,17 +195,6 @@ func JoinRoom(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 400,
 			"msg":  "房间已满",
-		})
-		return
-	}
-
-	// 检查是否已经加入
-	var existMember model.RoomMember
-	err := database.DB.Where("room_id = ? AND user_id = ?", req.RoomID, userID).First(&existMember).Error
-	if err == nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 400,
-			"msg":  "已经加入该房间",
 		})
 		return
 	}
