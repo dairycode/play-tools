@@ -42,30 +42,24 @@
 </template>
 
 <script setup lang="ts">
-import { onLoad } from '@dcloudio/uni-app'
 import { isLogin } from '@/utils/auth'
 
-onLoad(async () => {
-  // 检查登录状态
+const navigateWithAuth = (targetUrl: string) => {
   if (!isLogin()) {
-    // 跳转到登录页，并携带返回路径
     uni.navigateTo({
-      url: '/pages/login/login?redirect=' + encodeURIComponent('/pages/index/index')
+      url: '/pages/login/login?redirect=' + encodeURIComponent(targetUrl)
     })
     return
   }
-})
+  uni.navigateTo({ url: targetUrl })
+}
 
 const goToAccount = () => {
-  uni.navigateTo({
-    url: '/pages/account/account'
-  })
+  navigateWithAuth('/pages/account/account')
 }
 
 const goToCreateRoom = () => {
-  uni.navigateTo({
-    url: '/pages/poker/create-room'
-  })
+  navigateWithAuth('/pages/poker/create-room')
 }
 </script>
 
