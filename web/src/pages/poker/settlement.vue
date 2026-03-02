@@ -18,7 +18,8 @@
           <view style="display: flex; align-items: center; justify-content: space-between;">
             <!-- From Player -->
             <view style="display: flex; flex-direction: column; align-items: center; flex: 1;">
-              <view class="btn-primary" style="width: 160rpx; height: 160rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 16rpx;">
+              <image v-if="item.fromAvatar" :src="item.fromAvatar" style="width: 160rpx; height: 160rpx; border-radius: 50%; margin-bottom: 16rpx;" mode="aspectFill" />
+              <view v-else class="btn-primary" style="width: 160rpx; height: 160rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 16rpx;">
                 <text style="font-size: 64rpx; font-weight: bold; color: white;">{{ item.fromNickname.substring(0, 1) }}</text>
               </view>
               <view class="text-white" style="font-size: 28rpx; text-align: center;">{{ item.fromNickname }}</view>
@@ -32,7 +33,8 @@
 
             <!-- To Player -->
             <view style="display: flex; flex-direction: column; align-items: center; flex: 1;">
-              <view class="btn-primary" style="width: 160rpx; height: 160rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 16rpx;">
+              <image v-if="item.toAvatar" :src="item.toAvatar" style="width: 160rpx; height: 160rpx; border-radius: 50%; margin-bottom: 16rpx;" mode="aspectFill" />
+              <view v-else class="btn-primary" style="width: 160rpx; height: 160rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 16rpx;">
                 <text style="font-size: 64rpx; font-weight: bold; color: white;">{{ item.toNickname.substring(0, 1) }}</text>
               </view>
               <view class="text-white" style="font-size: 28rpx; text-align: center;">{{ item.toNickname }}</view>

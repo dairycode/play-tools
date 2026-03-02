@@ -34,3 +34,6 @@ web/.hbuilderx/
 # 环境变量
 .env
 .env.local
+
+# 脚本
+script.sh

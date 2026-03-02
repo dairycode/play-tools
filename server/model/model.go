@@ -54,8 +54,10 @@ type Settlement struct {
 	RoomID       string    `gorm:"type:varchar(8);index;not null" json:"roomId"`
 	FromUserID   uint      `gorm:"not null" json:"fromUserId"`
 	FromNickname string    `gorm:"type:varchar(50);not null" json:"fromNickname"`
+	FromAvatar   string    `gorm:"type:varchar(500)" json:"fromAvatar"`
 	ToUserID     uint      `gorm:"not null" json:"toUserId"`
 	ToNickname   string    `gorm:"type:varchar(50);not null" json:"toNickname"`
+	ToAvatar     string    `gorm:"type:varchar(500)" json:"toAvatar"`
 	Amount       int       `gorm:"not null" json:"amount"`
 	CreatedAt    time.Time `json:"createdAt"`
 }

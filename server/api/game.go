@@ -12,6 +12,14 @@ import (
 	"github.com/google/uuid"
 )
 
+// fullAvatarURL 拼接头像完整URL
+func fullAvatarURL(avatar string) string {
+	if avatar != "" && !strings.HasPrefix(avatar, "http") {
+		return config.AppConfig.Server.BaseURL + avatar
+	}
+	return avatar
+}
+
 // CreateRoomRequest 创建房间请求
 type CreateRoomRequest struct {
 	Name       string `json:"name" binding:"required"`
@@ -57,8 +65,10 @@ type MemberInfo struct {
 type Settlement struct {
 	FromUserID   uint   `json:"fromUserId"`
 	FromNickname string `json:"fromNickname"`
+	FromAvatar   string `json:"fromAvatar"`
 	ToUserID     uint   `json:"toUserId"`
 	ToNickname   string `json:"toNickname"`
+	ToAvatar     string `json:"toAvatar"`
 	Amount       int    `json:"amount"`
 }
 
@@ -258,16 +268,10 @@ func GetRoomInfo(c *gin.Context) {
 	// 构建成员信息列表
 	memberInfos := make([]MemberInfo, 0, len(members))
 	for _, member := range members {
-		// 拼接头像完整URL
-		avatarURL := member.Avatar
-		if avatarURL != "" && !strings.HasPrefix(avatarURL, "http") {
-			avatarURL = config.AppConfig.Server.BaseURL + avatarURL
-		}
-
 		memberInfos = append(memberInfos, MemberInfo{
 			UserID:   member.UserID,
 			Nickname: member.Nickname,
-			Avatar:   avatarURL,
+			Avatar:   fullAvatarURL(member.Avatar),
 			IsReady:  member.IsReady,
 			Balance:  balanceMap[member.UserID],
 		})
@@ -432,8 +436,10 @@ func FinishGame(c *gin.Context) {
 			RoomID:       req.RoomID,
 			FromUserID:   s.FromUserID,
 			FromNickname: s.FromNickname,
+			FromAvatar:   s.FromAvatar,
 			ToUserID:     s.ToUserID,
 			ToNickname:   s.ToNickname,
+			ToAvatar:     s.ToAvatar,
 			Amount:       s.Amount,
 		}
 		database.DB.Create(&settlement)
@@ -451,10 +457,12 @@ func calculateSettlements(members []model.RoomMember, transactions []model.Trans
 	// 计算每个人的余额
 	balanceMap := make(map[uint]int)
 	nicknameMap := make(map[uint]string)
+	avatarMap := make(map[uint]string)
 
 	for _, member := range members {
 		balanceMap[member.UserID] = 0
 		nicknameMap[member.UserID] = member.Nickname
+		avatarMap[member.UserID] = fullAvatarURL(member.Avatar)
 	}
 
 	for _, tx := range transactions {
@@ -466,6 +474,7 @@ func calculateSettlements(members []model.RoomMember, transactions []model.Trans
 	type BalanceInfo struct {
 		UserID   uint
 		Nickname string
+		Avatar   string
 		Balance  int
 	}
 
@@ -477,12 +486,14 @@ func calculateSettlements(members []model.RoomMember, transactions []model.Trans
 			debtors = append(debtors, BalanceInfo{
 				UserID:   userID,
 				Nickname: nicknameMap[userID],
+				Avatar:   avatarMap[userID],
 				Balance:  -balance, // 转为正数
 			})
 		} else if balance > 0 {
 			creditors = append(creditors, BalanceInfo{
 				UserID:   userID,
 				Nickname: nicknameMap[userID],
+				Avatar:   avatarMap[userID],
 				Balance:  balance,
 			})
 		}
@@ -509,8 +520,10 @@ func calculateSettlements(members []model.RoomMember, transactions []model.Trans
 		settlements = append(settlements, Settlement{
 			FromUserID:   debtors[i].UserID,
 			FromNickname: debtors[i].Nickname,
+			FromAvatar:   debtors[i].Avatar,
 			ToUserID:     creditors[j].UserID,
 			ToNickname:   creditors[j].Nickname,
+			ToAvatar:     creditors[j].Avatar,
 			Amount:       amount,
 		})
 
@@ -593,8 +606,10 @@ func GetRoomSettlements(c *gin.Context) {
 		result = append(result, Settlement{
 			FromUserID:   s.FromUserID,
 			FromNickname: s.FromNickname,
+			FromAvatar:   fullAvatarURL(s.FromAvatar),
 			ToUserID:     s.ToUserID,
 			ToNickname:   s.ToNickname,
+			ToAvatar:     fullAvatarURL(s.ToAvatar),
 			Amount:       s.Amount,
 		})
 	}

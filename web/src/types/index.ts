@@ -59,7 +59,9 @@ export interface Transaction {
 export interface Settlement {
   fromUserId: number
   fromNickname: string
+  fromAvatar?: string
   toUserId: number
   toNickname: string
+  toAvatar?: string
   amount: number
 }
