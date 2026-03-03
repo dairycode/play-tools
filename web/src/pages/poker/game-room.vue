@@ -483,19 +483,10 @@ const handleLeaveRoom = () => {
             icon: 'success'
           })
 
-          // 返回上一页并刷新
           setTimeout(() => {
-            // 获取页面栈
-            const pages = getCurrentPages()
-            const prevPage = pages[pages.length - 2]
-
-            // 如果上一页是创建房间页，通知它刷新
-            if (prevPage && prevPage.route === 'pages/poker/create-room') {
-              // @ts-ignore
-              prevPage.$vm.loadCurrentRoom && prevPage.$vm.loadCurrentRoom()
-            }
-
-            uni.navigateBack()
+            uni.redirectTo({
+              url: '/pages/poker/create-room'
+            })
           }, 1000)
         } catch (error) {
           uni.hideLoading()
